@@ -1,7 +1,28 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Globe, Heart, Twitter, Github, Linkedin } from "lucide-react";
+import SocialDialog from "@/components/dialogs/SocialDialog";
+import InfoDialog from "@/components/dialogs/InfoDialog";
+
+type SocialPlatform = "twitter" | "github" | "linkedin";
+type InfoType = "documentation" | "api" | "contribute" | "partners" | "contact";
 
 const Footer = () => {
+  const [socialPlatform, setSocialPlatform] = useState<SocialPlatform | null>(null);
+  const [socialDialogOpen, setSocialDialogOpen] = useState(false);
+  const [infoType, setInfoType] = useState<InfoType | null>(null);
+  const [infoDialogOpen, setInfoDialogOpen] = useState(false);
+
+  const handleSocialClick = (platform: SocialPlatform) => {
+    setSocialPlatform(platform);
+    setSocialDialogOpen(true);
+  };
+
+  const handleInfoClick = (type: InfoType) => {
+    setInfoType(type);
+    setInfoDialogOpen(true);
+  };
+
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-12 md:py-16">
@@ -21,15 +42,24 @@ const Footer = () => {
               Preserving endangered languages through AI-powered technology, connecting generations and cultures.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <button 
+                onClick={() => handleSocialClick("twitter")}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              </button>
+              <button 
+                onClick={() => handleSocialClick("github")}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              </button>
+              <button 
+                onClick={() => handleSocialClick("linkedin")}
+                className="text-muted-foreground hover:text-primary transition-colors"
+              >
                 <Linkedin className="w-5 h-5" />
-              </a>
+              </button>
             </div>
           </div>
 
@@ -50,8 +80,22 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><Link to="/about" className="text-muted-foreground hover:text-primary transition-colors text-sm">About the Problem</Link></li>
               <li><Link to="/impact" className="text-muted-foreground hover:text-primary transition-colors text-sm">Our Impact</Link></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Documentation</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">API Access</a></li>
+              <li>
+                <button 
+                  onClick={() => handleInfoClick("documentation")}
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  Documentation
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleInfoClick("api")}
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  API Access
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -60,9 +104,30 @@ const Footer = () => {
             <h4 className="font-display font-semibold text-foreground mb-4">Community</h4>
             <ul className="space-y-3">
               <li><Link to="/join" className="text-muted-foreground hover:text-primary transition-colors text-sm">Join Movement</Link></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Contribute</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Research Partners</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">Contact Us</a></li>
+              <li>
+                <button 
+                  onClick={() => handleInfoClick("contribute")}
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  Contribute
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleInfoClick("partners")}
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  Research Partners
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleInfoClick("contact")}
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                >
+                  Contact Us
+                </button>
+              </li>
             </ul>
           </div>
         </div>
@@ -76,6 +141,17 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      <SocialDialog 
+        open={socialDialogOpen} 
+        onOpenChange={setSocialDialogOpen} 
+        platform={socialPlatform} 
+      />
+      <InfoDialog 
+        open={infoDialogOpen} 
+        onOpenChange={setInfoDialogOpen} 
+        type={infoType} 
+      />
     </footer>
   );
 };
