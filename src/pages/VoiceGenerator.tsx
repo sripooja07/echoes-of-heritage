@@ -1,0 +1,292 @@
+import { useState } from "react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Brain, Play, Download, Volume2, Sparkles } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+const languages = [
+  { id: "cherokee", name: "Cherokee", speakers: "2,000" },
+  { id: "maori", name: "Māori", speakers: "50,000" },
+  { id: "navajo", name: "Navajo", speakers: "170,000" },
+  { id: "welsh", name: "Welsh", speakers: "750,000" },
+  { id: "basque", name: "Basque", speakers: "750,000" },
+  { id: "hawaiian", name: "Hawaiian", speakers: "24,000" },
+];
+
+const voices = [
+  { id: "elder-male", name: "Elder Male", description: "Deep, wise voice" },
+  { id: "elder-female", name: "Elder Female", description: "Warm, nurturing voice" },
+  { id: "young-male", name: "Young Male", description: "Clear, energetic voice" },
+  { id: "young-female", name: "Young Female", description: "Bright, melodic voice" },
+];
+
+const VoiceGenerator = () => {
+  const [text, setText] = useState("");
+  const [language, setLanguage] = useState("");
+  const [voice, setVoice] = useState("");
+  const [speed, setSpeed] = useState([1]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [hasAudio, setHasAudio] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!text || !language || !voice) {
+      toast({
+        title: "Missing fields",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    
+    // Simulate AI generation
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    
+    setIsGenerating(false);
+    setHasAudio(true);
+    
+    toast({
+      title: "Audio generated!",
+      description: "Your AI-synthesized speech is ready to play.",
+    });
+  };
+
+  const handlePlay = () => {
+    toast({
+      title: "Playing audio",
+      description: "AI-generated speech playback started.",
+    });
+  };
+
+  const handleDownload = () => {
+    toast({
+      title: "Downloading",
+      description: "Audio file is being downloaded.",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+
+      <main className="pt-20">
+        {/* Hero */}
+        <section className="py-16 md:py-24 relative overflow-hidden">
+          <div className="absolute inset-0 hero-gradient" />
+          <div className="absolute inset-0 wave-pattern opacity-20" />
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
+                <Brain className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-primary">AI-Powered</span>
+              </div>
+              <h1 className="font-display text-4xl md:text-5xl font-bold mt-4 mb-6">
+                AI <span className="text-gradient">Voice Generator</span>
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Generate natural-sounding speech in endangered languages using our AI voice models 
+                trained on native speaker recordings.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Generator Interface */}
+        <section className="py-12 md:py-20">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Input Panel */}
+                <div className="lg:col-span-2 space-y-6">
+                  <div className="glass-card rounded-2xl p-8 space-y-6">
+                    <h2 className="font-display text-xl font-semibold">Text Input</h2>
+                    
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Select Language</Label>
+                          <Select value={language} onValueChange={setLanguage}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choose language" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {languages.map((lang) => (
+                                <SelectItem key={lang.id} value={lang.id}>
+                                  <div className="flex items-center justify-between w-full">
+                                    <span>{lang.name}</span>
+                                    <span className="text-xs text-muted-foreground ml-2">
+                                      ~{lang.speakers} speakers
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Voice Model</Label>
+                          <Select value={voice} onValueChange={setVoice}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choose voice" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {voices.map((v) => (
+                                <SelectItem key={v.id} value={v.id}>
+                                  <div>
+                                    <span>{v.name}</span>
+                                    <span className="text-xs text-muted-foreground ml-2">
+                                      {v.description}
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="text">Enter Text</Label>
+                        <Textarea
+                          id="text"
+                          placeholder="Enter the text you want to convert to speech..."
+                          value={text}
+                          onChange={(e) => setText(e.target.value)}
+                          rows={6}
+                          className="resize-none"
+                        />
+                        <p className="text-xs text-muted-foreground text-right">
+                          {text.length} characters
+                        </p>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <Label>Speech Speed</Label>
+                          <span className="text-sm text-muted-foreground">{speed[0]}x</span>
+                        </div>
+                        <Slider
+                          value={speed}
+                          onValueChange={setSpeed}
+                          min={0.5}
+                          max={2}
+                          step={0.1}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="hero"
+                      size="xl"
+                      className="w-full gap-2"
+                      onClick={handleGenerate}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Sparkles className="w-5 h-5 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Brain className="w-5 h-5" />
+                          Generate Speech
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Output Panel */}
+                <div className="space-y-6">
+                  <div className="glass-card rounded-2xl p-8 space-y-6">
+                    <h2 className="font-display text-xl font-semibold">Generated Audio</h2>
+
+                    {/* Audio Visualization */}
+                    <div className="relative h-40 bg-secondary/50 rounded-xl flex items-center justify-center overflow-hidden">
+                      {hasAudio ? (
+                        <div className="flex items-end justify-center gap-1 h-24">
+                          {[...Array(20)].map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-2 bg-gradient-to-t from-primary to-accent rounded-full animate-wave"
+                              style={{
+                                height: `${20 + Math.random() * 60}%`,
+                                animationDelay: `${i * 0.05}s`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center text-muted-foreground">
+                          <Volume2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">No audio generated yet</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Playback Controls */}
+                    <div className="flex gap-4">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="flex-1 gap-2"
+                        onClick={handlePlay}
+                        disabled={!hasAudio}
+                      >
+                        <Play className="w-5 h-5" />
+                        Play
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="flex-1 gap-2"
+                        onClick={handleDownload}
+                        disabled={!hasAudio}
+                      >
+                        <Download className="w-5 h-5" />
+                        Download
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Info Card */}
+                  <div className="glass-card rounded-2xl p-6">
+                    <h3 className="font-semibold text-foreground mb-3">How It Works</h3>
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary">1.</span>
+                        Our AI is trained on authentic native speaker recordings
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary">2.</span>
+                        Text is processed with language-specific phonetics
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-primary">3.</span>
+                        Natural-sounding speech is synthesized in real-time
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default VoiceGenerator;
