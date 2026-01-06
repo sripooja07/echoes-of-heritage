@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Brain, Play, Download, Volume2, Sparkles } from "lucide-react";
+import { Brain, Play, Download, Volume2, Sparkles, Pause, Square } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const languages = [
@@ -32,6 +32,19 @@ const VoiceGenerator = () => {
   const [speed, setSpeed] = useState([1]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [hasAudio, setHasAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [generatedText, setGeneratedText] = useState("");
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const getVoicePitch = (voiceId: string) => {
+    switch (voiceId) {
+      case "elder-male": return 0.8;
+      case "elder-female": return 1.1;
+      case "young-male": return 1.0;
+      case "young-female": return 1.3;
+      default: return 1;
+    }
+  };
 
   const handleGenerate = async () => {
     if (!text || !language || !voice) {
@@ -45,9 +58,10 @@ const VoiceGenerator = () => {
 
     setIsGenerating(true);
     
-    // Simulate AI generation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Simulate AI processing
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     
+    setGeneratedText(text);
     setIsGenerating(false);
     setHasAudio(true);
     
@@ -58,16 +72,56 @@ const VoiceGenerator = () => {
   };
 
   const handlePlay = () => {
+    if (!generatedText) return;
+
+    if (isPlaying) {
+      window.speechSynthesis.pause();
+      setIsPlaying(false);
+      return;
+    }
+
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setIsPlaying(true);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(generatedText);
+    utterance.rate = speed[0];
+    utterance.pitch = getVoicePitch(voice);
+    
+    utterance.onend = () => {
+      setIsPlaying(false);
+    };
+    
+    utterance.onerror = () => {
+      setIsPlaying(false);
+      toast({
+        title: "Playback error",
+        description: "There was an issue playing the audio.",
+        variant: "destructive",
+      });
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+    setIsPlaying(true);
+    
     toast({
       title: "Playing audio",
       description: "AI-generated speech playback started.",
     });
   };
 
+  const handleStop = () => {
+    window.speechSynthesis.cancel();
+    setIsPlaying(false);
+  };
+
   const handleDownload = () => {
     toast({
-      title: "Downloading",
-      description: "Audio file is being downloaded.",
+      title: "Download Notice",
+      description: "Audio download requires a backend service. Contact support for export options.",
     });
   };
 
@@ -235,16 +289,34 @@ const VoiceGenerator = () => {
                     </div>
 
                     {/* Playback Controls */}
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                       <Button
-                        variant="outline"
+                        variant={isPlaying ? "default" : "outline"}
                         size="lg"
                         className="flex-1 gap-2"
                         onClick={handlePlay}
                         disabled={!hasAudio}
                       >
-                        <Play className="w-5 h-5" />
-                        Play
+                        {isPlaying ? (
+                          <>
+                            <Pause className="w-5 h-5" />
+                            Pause
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-5 h-5" />
+                            Play
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="gap-2"
+                        onClick={handleStop}
+                        disabled={!hasAudio || !isPlaying}
+                      >
+                        <Square className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="outline"
@@ -254,7 +326,7 @@ const VoiceGenerator = () => {
                         disabled={!hasAudio}
                       >
                         <Download className="w-5 h-5" />
-                        Download
+                        Export
                       </Button>
                     </div>
                   </div>

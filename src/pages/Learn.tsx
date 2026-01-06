@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, Play, Volume2, Search, Star, Users, Clock, ArrowRight } from "lucide-react";
+import { BookOpen, Play, Volume2, Search, Star, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const languages = [
   {
@@ -101,6 +102,7 @@ const getStatusColor = (status: string) => {
 const Learn = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("all");
+  const [playingWord, setPlayingWord] = useState<string | null>(null);
 
   const filteredLanguages = languages.filter((lang) => {
     const matchesSearch = lang.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -109,6 +111,39 @@ const Learn = () => {
   });
 
   const regions = ["all", ...new Set(languages.map((l) => l.region))];
+
+  const playPronunciation = (word: string, native: string) => {
+    if (playingWord === native) {
+      window.speechSynthesis.cancel();
+      setPlayingWord(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    
+    utterance.onstart = () => {
+      setPlayingWord(native);
+    };
+    
+    utterance.onend = () => {
+      setPlayingWord(null);
+    };
+    
+    utterance.onerror = () => {
+      setPlayingWord(null);
+      toast({
+        title: "Playback error",
+        description: "Could not play pronunciation.",
+        variant: "destructive",
+      });
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -295,8 +330,13 @@ const Learn = () => {
                         <p className="text-sm text-muted-foreground">{word.translation}</p>
                         <p className="text-xs text-primary">/{word.phonetic}/</p>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        <Volume2 className="w-5 h-5" />
+                      <Button 
+                        variant={playingWord === word.native ? "default" : "ghost"} 
+                        size="icon"
+                        onClick={() => playPronunciation(word.native, word.native)}
+                        className="shrink-0"
+                      >
+                        <Volume2 className={`w-5 h-5 ${playingWord === word.native ? "animate-pulse" : ""}`} />
                       </Button>
                     </div>
                   ))}
