@@ -34,6 +34,7 @@ const VoiceGenerator = () => {
   const [hasAudio, setHasAudio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [translatedText, setTranslatedText] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleGenerate = async () => {
@@ -61,7 +62,8 @@ const VoiceGenerator = () => {
           body: JSON.stringify({ 
             text, 
             voiceType: voice,
-            speed: speed[0]
+            speed: speed[0],
+            language
           }),
         }
       );
@@ -73,6 +75,12 @@ const VoiceGenerator = () => {
       const audioBlob = await response.blob();
       const url = URL.createObjectURL(audioBlob);
       
+      // Get translated text from response header
+      const translated = response.headers.get("X-Translated-Text");
+      if (translated) {
+        setTranslatedText(decodeURIComponent(translated));
+      }
+      
       // Clean up previous audio URL
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
@@ -81,9 +89,10 @@ const VoiceGenerator = () => {
       setAudioUrl(url);
       setHasAudio(true);
       
+      const langName = languages.find(l => l.id === language)?.name || language;
       toast({
         title: "Audio generated!",
-        description: "Your AI-synthesized speech is ready to play.",
+        description: `Text translated to ${langName} and synthesized.`,
       });
     } catch (error) {
       console.error("TTS error:", error);
@@ -276,14 +285,22 @@ const VoiceGenerator = () => {
                   <div className="glass-card rounded-2xl p-8 space-y-6">
                     <h2 className="font-display text-xl font-semibold">Generated Audio</h2>
 
+                    {/* Translated Text Display */}
+                    {translatedText && (
+                      <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
+                        <p className="text-xs text-primary font-medium mb-1">Translated Text:</p>
+                        <p className="text-foreground font-medium">{translatedText}</p>
+                      </div>
+                    )}
+
                     {/* Audio Visualization */}
-                    <div className="relative h-40 bg-secondary/50 rounded-xl flex items-center justify-center overflow-hidden">
+                    <div className="relative h-32 bg-secondary/50 rounded-xl flex items-center justify-center overflow-hidden">
                       {hasAudio ? (
-                        <div className="flex items-end justify-center gap-1 h-24">
+                        <div className="flex items-end justify-center gap-1 h-20">
                           {[...Array(20)].map((_, i) => (
                             <div
                               key={i}
-                              className="w-2 bg-gradient-to-t from-primary to-accent rounded-full animate-wave"
+                              className={`w-2 bg-gradient-to-t from-primary to-accent rounded-full ${isPlaying ? 'animate-wave' : ''}`}
                               style={{
                                 height: `${20 + Math.random() * 60}%`,
                                 animationDelay: `${i * 0.05}s`,
@@ -293,7 +310,7 @@ const VoiceGenerator = () => {
                         </div>
                       ) : (
                         <div className="text-center text-muted-foreground">
-                          <Volume2 className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                          <Volume2 className="w-10 h-10 mx-auto mb-2 opacity-50" />
                           <p className="text-sm">No audio generated yet</p>
                         </div>
                       )}
