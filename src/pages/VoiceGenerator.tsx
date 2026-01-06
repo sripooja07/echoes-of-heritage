@@ -33,18 +33,8 @@ const VoiceGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [hasAudio, setHasAudio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [generatedText, setGeneratedText] = useState("");
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  const getVoicePitch = (voiceId: string) => {
-    switch (voiceId) {
-      case "elder-male": return 0.8;
-      case "elder-female": return 1.1;
-      case "young-male": return 1.0;
-      case "young-female": return 1.3;
-      default: return 1;
-    }
-  };
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleGenerate = async () => {
     if (!text || !language || !voice) {
@@ -58,70 +48,91 @@ const VoiceGenerator = () => {
 
     setIsGenerating(true);
     
-    // Simulate AI processing
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setGeneratedText(text);
-    setIsGenerating(false);
-    setHasAudio(true);
-    
-    toast({
-      title: "Audio generated!",
-      description: "Your AI-synthesized speech is ready to play.",
-    });
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ 
+            text, 
+            voiceType: voice,
+            speed: speed[0]
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`TTS request failed: ${response.status}`);
+      }
+
+      const audioBlob = await response.blob();
+      const url = URL.createObjectURL(audioBlob);
+      
+      // Clean up previous audio URL
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+      
+      setAudioUrl(url);
+      setHasAudio(true);
+      
+      toast({
+        title: "Audio generated!",
+        description: "Your AI-synthesized speech is ready to play.",
+      });
+    } catch (error) {
+      console.error("TTS error:", error);
+      toast({
+        title: "Generation failed",
+        description: "Could not generate audio. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handlePlay = () => {
-    if (!generatedText) return;
+    if (!audioUrl) return;
 
-    if (isPlaying) {
-      window.speechSynthesis.pause();
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
       setIsPlaying(false);
       return;
     }
 
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
+    if (audioRef.current) {
+      audioRef.current.play();
       setIsPlaying(true);
-      return;
     }
-
-    const utterance = new SpeechSynthesisUtterance(generatedText);
-    utterance.rate = speed[0];
-    utterance.pitch = getVoicePitch(voice);
-    
-    utterance.onend = () => {
-      setIsPlaying(false);
-    };
-    
-    utterance.onerror = () => {
-      setIsPlaying(false);
-      toast({
-        title: "Playback error",
-        description: "There was an issue playing the audio.",
-        variant: "destructive",
-      });
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
-    setIsPlaying(true);
-    
-    toast({
-      title: "Playing audio",
-      description: "AI-generated speech playback started.",
-    });
   };
 
   const handleStop = () => {
-    window.speechSynthesis.cancel();
-    setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
   };
 
   const handleDownload = () => {
+    if (!audioUrl) return;
+    
+    const a = document.createElement("a");
+    a.href = audioUrl;
+    a.download = `${language}-${voice}-speech.mp3`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
     toast({
-      title: "Download Notice",
-      description: "Audio download requires a backend service. Contact support for export options.",
+      title: "Download started",
+      description: "Your audio file is being downloaded.",
     });
   };
 
@@ -287,6 +298,23 @@ const VoiceGenerator = () => {
                         </div>
                       )}
                     </div>
+
+                    {/* Hidden Audio Element */}
+                    {audioUrl && (
+                      <audio
+                        ref={audioRef}
+                        src={audioUrl}
+                        onEnded={() => setIsPlaying(false)}
+                        onError={() => {
+                          setIsPlaying(false);
+                          toast({
+                            title: "Playback error",
+                            description: "Could not play the audio.",
+                            variant: "destructive",
+                          });
+                        }}
+                      />
+                    )}
 
                     {/* Playback Controls */}
                     <div className="flex gap-2">
