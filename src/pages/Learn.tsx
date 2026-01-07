@@ -274,9 +274,11 @@ const Learn = () => {
                     </p>
 
                     {/* CTA */}
-                    <Button variant="hero" className="w-full gap-2">
-                      Start Learning
-                      <ArrowRight className="w-4 h-4" />
+                    <Button variant="hero" className="w-full gap-2" asChild>
+                      <Link to={`/learn/${lang.id}`}>
+                        Start Learning
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -343,7 +345,7 @@ const Learn = () => {
                 </div>
 
                 <Button variant="hero" size="lg" className="w-full gap-2" asChild>
-                  <Link to="/learn/maori/lesson-1">
+                  <Link to="/learn/maori/lesson/2">
                     <Play className="w-5 h-5" />
                     Start This Lesson
                   </Link>
