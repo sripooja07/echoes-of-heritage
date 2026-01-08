@@ -180,7 +180,7 @@ const VoiceGenerator = () => {
                 {/* Input Panel */}
                 <div className="lg:col-span-2 space-y-6">
                   <div className="glass-card rounded-2xl p-8 space-y-6">
-                    <h2 className="font-display text-xl font-semibold">Text Input</h2>
+                    <h2 className="font-display text-xl font-semibold">Text Translator</h2>
                     
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
