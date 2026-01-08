@@ -16,6 +16,21 @@ const languages = [
   { id: "welsh", name: "Welsh", speakers: "750,000" },
   { id: "basque", name: "Basque", speakers: "750,000" },
   { id: "hawaiian", name: "Hawaiian", speakers: "24,000" },
+  { id: "ainu", name: "Ainu", speakers: "10" },
+  { id: "yuchi", name: "Yuchi", speakers: "4" },
+  { id: "livonian", name: "Livonian", speakers: "20" },
+  { id: "siletz", name: "Siletz Dee-ni", speakers: "1" },
+  { id: "tanema", name: "Tanema", speakers: "1" },
+  { id: "njerep", name: "Njerep", speakers: "4" },
+  { id: "chulym", name: "Chulym", speakers: "44" },
+  { id: "ter-sami", name: "Ter Sami", speakers: "2" },
+  { id: "ongota", name: "Ongota", speakers: "12" },
+  { id: "liki", name: "Liki", speakers: "11" },
+  { id: "taushiro", name: "Taushiro", speakers: "1" },
+  { id: "tinigua", name: "Tinigua", speakers: "1" },
+  { id: "patwin", name: "Patwin", speakers: "3" },
+  { id: "chamicuro", name: "Chamicuro", speakers: "8" },
+  { id: "dumi", name: "Dumi", speakers: "8" },
 ];
 
 const voices = [
