@@ -10,6 +10,7 @@ import VoiceGenerator from "./pages/VoiceGenerator";
 import Learn from "./pages/Learn";
 import LanguagePath from "./pages/LanguagePath";
 import Lesson from "./pages/Lesson";
+import PracticeTest from "./pages/PracticeTest";
 import Admin from "./pages/Admin";
 import Join from "./pages/Join";
 import Impact from "./pages/Impact";
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/learn" element={<Learn />} />
           <Route path="/learn/:languageId" element={<LanguagePath />} />
           <Route path="/learn/:languageId/lesson/:lessonId" element={<Lesson />} />
+          <Route path="/learn/:languageId/practice-test" element={<PracticeTest />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/join" element={<Join />} />
           <Route path="/impact" element={<Impact />} />

@@ -40,9 +40,9 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Cherokee Syllabary Introduction", description: "Learn the unique Cherokee writing system", duration: "15 min", completed: false, locked: false },
           { id: 2, title: "Basic Greetings", description: "Say hello, goodbye, and common phrases", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "Numbers 1-10", description: "Count in Cherokee", duration: "15 min", completed: false, locked: true },
-          { id: 4, title: "Family Members", description: "Learn words for family relationships", duration: "25 min", completed: false, locked: true },
-          { id: 5, title: "Colors & Nature", description: "Describe the world around you", duration: "20 min", completed: false, locked: true },
+          { id: 3, title: "Numbers 1-10", description: "Count in Cherokee", duration: "15 min", completed: false, locked: false },
+          { id: 4, title: "Family Members", description: "Learn words for family relationships", duration: "25 min", completed: false, locked: false },
+          { id: 5, title: "Colors & Nature", description: "Describe the world around you", duration: "20 min", completed: false, locked: false },
         ],
       },
       {
@@ -50,11 +50,11 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Build sentences, learn verb conjugations, and expand your vocabulary.",
         lessons: [
-          { id: 6, title: "Simple Sentences", description: "Construct basic Cherokee sentences", duration: "30 min", completed: false, locked: true },
-          { id: 7, title: "Verb Basics", description: "Understand Cherokee verb structure", duration: "35 min", completed: false, locked: true },
-          { id: 8, title: "Daily Activities", description: "Talk about everyday actions", duration: "25 min", completed: false, locked: true },
-          { id: 9, title: "Food & Eating", description: "Vocabulary for meals and cuisine", duration: "25 min", completed: false, locked: true },
-          { id: 10, title: "Asking Questions", description: "Form questions in Cherokee", duration: "30 min", completed: false, locked: true },
+          { id: 6, title: "Simple Sentences", description: "Construct basic Cherokee sentences", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Verb Basics", description: "Understand Cherokee verb structure", duration: "35 min", completed: false, locked: false },
+          { id: 8, title: "Daily Activities", description: "Talk about everyday actions", duration: "25 min", completed: false, locked: false },
+          { id: 9, title: "Food & Eating", description: "Vocabulary for meals and cuisine", duration: "25 min", completed: false, locked: false },
+          { id: 10, title: "Asking Questions", description: "Form questions in Cherokee", duration: "30 min", completed: false, locked: false },
         ],
       },
       {
@@ -62,10 +62,18 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Master complex grammar, cultural expressions, and conversational fluency.",
         lessons: [
-          { id: 11, title: "Complex Sentences", description: "Advanced sentence structures", duration: "40 min", completed: false, locked: true },
-          { id: 12, title: "Storytelling", description: "Traditional Cherokee narratives", duration: "45 min", completed: false, locked: true },
-          { id: 13, title: "Cultural Ceremonies", description: "Language of Cherokee traditions", duration: "35 min", completed: false, locked: true },
-          { id: 14, title: "Conversational Practice", description: "Real-world dialogue scenarios", duration: "50 min", completed: false, locked: true },
+          { id: 11, title: "Complex Sentences", description: "Advanced sentence structures", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Storytelling", description: "Traditional Cherokee narratives", duration: "45 min", completed: false, locked: false },
+          { id: 13, title: "Cultural Ceremonies", description: "Language of Cherokee traditions", duration: "35 min", completed: false, locked: false },
+          { id: 14, title: "Conversational Practice", description: "Real-world dialogue scenarios", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Cherokee knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Cherokee skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -82,10 +90,10 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Pronunciation Guide", description: "Master Māori vowels and consonants", duration: "15 min", completed: false, locked: false },
           { id: 2, title: "Greetings & Farewells", description: "Kia ora, Haere mai, and more", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "Introducing Yourself", description: "Ko wai koe? Learn to introduce yourself", duration: "25 min", completed: false, locked: true },
-          { id: 4, title: "Numbers & Counting", description: "Count from 1 to 100", duration: "20 min", completed: false, locked: true },
-          { id: 5, title: "Family & Relationships", description: "Whānau vocabulary", duration: "25 min", completed: false, locked: true },
-          { id: 6, title: "Colors & Descriptions", description: "Describe things around you", duration: "20 min", completed: false, locked: true },
+          { id: 3, title: "Introducing Yourself", description: "Ko wai koe? Learn to introduce yourself", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Numbers & Counting", description: "Count from 1 to 100", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Family & Relationships", description: "Whānau vocabulary", duration: "25 min", completed: false, locked: false },
+          { id: 6, title: "Colors & Descriptions", description: "Describe things around you", duration: "20 min", completed: false, locked: false },
         ],
       },
       {
@@ -93,11 +101,11 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Build fluency with sentence structures, everyday conversations, and cultural context.",
         lessons: [
-          { id: 7, title: "Sentence Structure", description: "Te reo sentence patterns", duration: "30 min", completed: false, locked: true },
-          { id: 8, title: "Actions & Verbs", description: "Express actions in Māori", duration: "35 min", completed: false, locked: true },
-          { id: 9, title: "Time & Place", description: "When and where expressions", duration: "25 min", completed: false, locked: true },
-          { id: 10, title: "Marae Protocol", description: "Language of the meeting house", duration: "40 min", completed: false, locked: true },
-          { id: 11, title: "Food & Dining", description: "Kai vocabulary and customs", duration: "25 min", completed: false, locked: true },
+          { id: 7, title: "Sentence Structure", description: "Te reo sentence patterns", duration: "30 min", completed: false, locked: false },
+          { id: 8, title: "Actions & Verbs", description: "Express actions in Māori", duration: "35 min", completed: false, locked: false },
+          { id: 9, title: "Time & Place", description: "When and where expressions", duration: "25 min", completed: false, locked: false },
+          { id: 10, title: "Marae Protocol", description: "Language of the meeting house", duration: "40 min", completed: false, locked: false },
+          { id: 11, title: "Food & Dining", description: "Kai vocabulary and customs", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -105,11 +113,19 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Achieve fluency through complex grammar, whakataukī (proverbs), and cultural immersion.",
         lessons: [
-          { id: 12, title: "Complex Grammar", description: "Passive voice and advanced structures", duration: "45 min", completed: false, locked: true },
-          { id: 13, title: "Whakataukī (Proverbs)", description: "Traditional Māori wisdom", duration: "35 min", completed: false, locked: true },
-          { id: 14, title: "Waiata (Songs)", description: "Learn through traditional songs", duration: "40 min", completed: false, locked: true },
-          { id: 15, title: "Pūrākau (Legends)", description: "Traditional Māori stories", duration: "50 min", completed: false, locked: true },
-          { id: 16, title: "Conversational Fluency", description: "Real-world dialogue mastery", duration: "60 min", completed: false, locked: true },
+          { id: 12, title: "Complex Grammar", description: "Passive voice and advanced structures", duration: "45 min", completed: false, locked: false },
+          { id: 13, title: "Whakataukī (Proverbs)", description: "Traditional Māori wisdom", duration: "35 min", completed: false, locked: false },
+          { id: 14, title: "Waiata (Songs)", description: "Learn through traditional songs", duration: "40 min", completed: false, locked: false },
+          { id: 15, title: "Pūrākau (Legends)", description: "Traditional Māori stories", duration: "50 min", completed: false, locked: false },
+          { id: 16, title: "Conversational Fluency", description: "Real-world dialogue mastery", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Te Reo Māori knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Māori skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -126,9 +142,9 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Navajo Sounds", description: "Unique consonants and tones", duration: "20 min", completed: false, locked: false },
           { id: 2, title: "Yá'át'ééh - Greetings", description: "Daily greetings and responses", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "Clan Introduction", description: "Introducing your clans", duration: "25 min", completed: false, locked: true },
-          { id: 4, title: "Numbers & Counting", description: "Navajo number system", duration: "20 min", completed: false, locked: true },
-          { id: 5, title: "Nature Words", description: "Land, sky, and animals", duration: "25 min", completed: false, locked: true },
+          { id: 3, title: "Clan Introduction", description: "Introducing your clans", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Numbers & Counting", description: "Navajo number system", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Nature Words", description: "Land, sky, and animals", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -136,10 +152,10 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Develop conversational skills with verbs, sentences, and cultural expressions.",
         lessons: [
-          { id: 6, title: "Verb Conjugation", description: "Complex Navajo verb system", duration: "40 min", completed: false, locked: true },
-          { id: 7, title: "Daily Routines", description: "Describe your day", duration: "30 min", completed: false, locked: true },
-          { id: 8, title: "Directions & Places", description: "Navigate in Navajo", duration: "25 min", completed: false, locked: true },
-          { id: 9, title: "Weather & Seasons", description: "Describe the environment", duration: "25 min", completed: false, locked: true },
+          { id: 6, title: "Verb Conjugation", description: "Complex Navajo verb system", duration: "40 min", completed: false, locked: false },
+          { id: 7, title: "Daily Routines", description: "Describe your day", duration: "30 min", completed: false, locked: false },
+          { id: 8, title: "Directions & Places", description: "Navigate in Navajo", duration: "25 min", completed: false, locked: false },
+          { id: 9, title: "Weather & Seasons", description: "Describe the environment", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -147,9 +163,17 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Master the complex verb system and engage with Navajo cultural traditions.",
         lessons: [
-          { id: 10, title: "Advanced Verbs", description: "Aspect and mode mastery", duration: "50 min", completed: false, locked: true },
-          { id: 11, title: "Traditional Stories", description: "Navajo oral traditions", duration: "45 min", completed: false, locked: true },
-          { id: 12, title: "Ceremonial Language", description: "Respectful cultural expressions", duration: "40 min", completed: false, locked: true },
+          { id: 10, title: "Advanced Verbs", description: "Aspect and mode mastery", duration: "50 min", completed: false, locked: false },
+          { id: 11, title: "Traditional Stories", description: "Navajo oral traditions", duration: "45 min", completed: false, locked: false },
+          { id: 12, title: "Ceremonial Language", description: "Respectful cultural expressions", duration: "40 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Diné Bizaad knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Navajo skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -166,9 +190,9 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Welsh Alphabet", description: "Unique letters and pronunciation", duration: "15 min", completed: false, locked: false },
           { id: 2, title: "Greetings & Introductions", description: "Shwmae! Basic interactions", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "Numbers & Time", description: "Count and tell time", duration: "25 min", completed: false, locked: true },
-          { id: 4, title: "Family & Home", description: "Household vocabulary", duration: "20 min", completed: false, locked: true },
-          { id: 5, title: "Colors & Objects", description: "Describe everyday items", duration: "20 min", completed: false, locked: true },
+          { id: 3, title: "Numbers & Time", description: "Count and tell time", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Family & Home", description: "Household vocabulary", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Colors & Objects", description: "Describe everyday items", duration: "20 min", completed: false, locked: false },
         ],
       },
       {
@@ -176,10 +200,10 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Build confidence with mutations, sentences, and conversational Welsh.",
         lessons: [
-          { id: 6, title: "Mutations Explained", description: "Soft, nasal, and aspirate", duration: "35 min", completed: false, locked: true },
-          { id: 7, title: "Present Tense", description: "Describe current actions", duration: "30 min", completed: false, locked: true },
-          { id: 8, title: "Past & Future", description: "Talk about time", duration: "35 min", completed: false, locked: true },
-          { id: 9, title: "Shopping & Services", description: "Practical Welsh", duration: "25 min", completed: false, locked: true },
+          { id: 6, title: "Mutations Explained", description: "Soft, nasal, and aspirate", duration: "35 min", completed: false, locked: false },
+          { id: 7, title: "Present Tense", description: "Describe current actions", duration: "30 min", completed: false, locked: false },
+          { id: 8, title: "Past & Future", description: "Talk about time", duration: "35 min", completed: false, locked: false },
+          { id: 9, title: "Shopping & Services", description: "Practical Welsh", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -187,9 +211,17 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Achieve fluency through literature, poetry, and cultural immersion.",
         lessons: [
-          { id: 10, title: "Literary Welsh", description: "Reading Welsh literature", duration: "45 min", completed: false, locked: true },
-          { id: 11, title: "Welsh Poetry", description: "Cynghanedd and traditions", duration: "40 min", completed: false, locked: true },
-          { id: 12, title: "Conversational Mastery", description: "Fluent dialogue practice", duration: "50 min", completed: false, locked: true },
+          { id: 10, title: "Literary Welsh", description: "Reading Welsh literature", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Welsh Poetry", description: "Cynghanedd and traditions", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Conversational Mastery", description: "Fluent dialogue practice", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Cymraeg knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Welsh skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -206,9 +238,9 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Hawaiian Sounds", description: "Vowels, consonants, and 'okina", duration: "15 min", completed: false, locked: false },
           { id: 2, title: "Aloha & Greetings", description: "The spirit of aloha", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "ʻOhana (Family)", description: "Family relationships", duration: "25 min", completed: false, locked: true },
-          { id: 4, title: "Numbers & Counting", description: "Hawaiian numerals", duration: "20 min", completed: false, locked: true },
-          { id: 5, title: "Nature & Environment", description: "Land and sea vocabulary", duration: "25 min", completed: false, locked: true },
+          { id: 3, title: "ʻOhana (Family)", description: "Family relationships", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Numbers & Counting", description: "Hawaiian numerals", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Nature & Environment", description: "Land and sea vocabulary", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -216,10 +248,10 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Develop skills with sentence patterns, directions, and cultural vocabulary.",
         lessons: [
-          { id: 6, title: "Sentence Patterns", description: "Hawaiian sentence structure", duration: "30 min", completed: false, locked: true },
-          { id: 7, title: "Directions & Places", description: "Navigate the islands", duration: "25 min", completed: false, locked: true },
-          { id: 8, title: "Food & Traditions", description: "Cuisine and customs", duration: "30 min", completed: false, locked: true },
-          { id: 9, title: "Daily Conversations", description: "Everyday interactions", duration: "35 min", completed: false, locked: true },
+          { id: 6, title: "Sentence Patterns", description: "Hawaiian sentence structure", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Directions & Places", description: "Navigate the islands", duration: "25 min", completed: false, locked: false },
+          { id: 8, title: "Food & Traditions", description: "Cuisine and customs", duration: "30 min", completed: false, locked: false },
+          { id: 9, title: "Daily Conversations", description: "Everyday interactions", duration: "35 min", completed: false, locked: false },
         ],
       },
       {
@@ -227,9 +259,17 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Master Hawaiian through mele (songs), moʻolelo (stories), and cultural depth.",
         lessons: [
-          { id: 10, title: "Mele (Songs)", description: "Learn through Hawaiian music", duration: "40 min", completed: false, locked: true },
-          { id: 11, title: "Moʻolelo (Stories)", description: "Traditional Hawaiian legends", duration: "45 min", completed: false, locked: true },
-          { id: 12, title: "Cultural Fluency", description: "Deep cultural understanding", duration: "50 min", completed: false, locked: true },
+          { id: 10, title: "Mele (Songs)", description: "Learn through Hawaiian music", duration: "40 min", completed: false, locked: false },
+          { id: 11, title: "Moʻolelo (Stories)", description: "Traditional Hawaiian legends", duration: "45 min", completed: false, locked: false },
+          { id: 12, title: "Cultural Fluency", description: "Deep cultural understanding", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your ʻŌlelo Hawaiʻi knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Hawaiian skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -246,9 +286,9 @@ const languageData: Record<string, {
         lessons: [
           { id: 1, title: "Basque Sounds", description: "Pronunciation and alphabet", duration: "15 min", completed: false, locked: false },
           { id: 2, title: "Kaixo! Greetings", description: "Basic greetings and farewells", duration: "20 min", completed: false, locked: false },
-          { id: 3, title: "Numbers & Time", description: "Counting in Basque", duration: "25 min", completed: false, locked: true },
-          { id: 4, title: "Introductions", description: "Introduce yourself", duration: "20 min", completed: false, locked: true },
-          { id: 5, title: "Basic Vocabulary", description: "Essential everyday words", duration: "25 min", completed: false, locked: true },
+          { id: 3, title: "Numbers & Time", description: "Counting in Basque", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Introductions", description: "Introduce yourself", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Basic Vocabulary", description: "Essential everyday words", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -256,10 +296,10 @@ const languageData: Record<string, {
         name: "Intermediate",
         description: "Learn the ergative case system and build conversational skills.",
         lessons: [
-          { id: 6, title: "Ergative Case", description: "Unique Basque grammar", duration: "40 min", completed: false, locked: true },
-          { id: 7, title: "Verb System", description: "Auxiliary verbs and conjugation", duration: "45 min", completed: false, locked: true },
-          { id: 8, title: "Daily Life", description: "Describe routines", duration: "30 min", completed: false, locked: true },
-          { id: 9, title: "Food & Culture", description: "Basque cuisine vocabulary", duration: "25 min", completed: false, locked: true },
+          { id: 6, title: "Ergative Case", description: "Unique Basque grammar", duration: "40 min", completed: false, locked: false },
+          { id: 7, title: "Verb System", description: "Auxiliary verbs and conjugation", duration: "45 min", completed: false, locked: false },
+          { id: 8, title: "Daily Life", description: "Describe routines", duration: "30 min", completed: false, locked: false },
+          { id: 9, title: "Food & Culture", description: "Basque cuisine vocabulary", duration: "25 min", completed: false, locked: false },
         ],
       },
       {
@@ -267,9 +307,17 @@ const languageData: Record<string, {
         name: "Advanced",
         description: "Master complex grammar and engage with Basque literature and traditions.",
         lessons: [
-          { id: 10, title: "Complex Sentences", description: "Advanced structures", duration: "50 min", completed: false, locked: true },
-          { id: 11, title: "Bertsolaritza", description: "Improvised verse tradition", duration: "45 min", completed: false, locked: true },
-          { id: 12, title: "Literary Basque", description: "Reading and writing", duration: "55 min", completed: false, locked: true },
+          { id: 10, title: "Complex Sentences", description: "Advanced structures", duration: "50 min", completed: false, locked: false },
+          { id: 11, title: "Bertsolaritza", description: "Improvised verse tradition", duration: "45 min", completed: false, locked: false },
+          { id: 12, title: "Literary Basque", description: "Reading and writing", duration: "55 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Euskara knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Basque skills", duration: "60 min", completed: false, locked: false },
         ],
       },
     ],
@@ -284,6 +332,8 @@ const getLevelIcon = (levelId: string) => {
       return <Star className="w-5 h-5" />;
     case "advanced":
       return <Trophy className="w-5 h-5" />;
+    case "practice-test":
+      return <Trophy className="w-5 h-5" />;
     default:
       return <BookOpen className="w-5 h-5" />;
   }
@@ -297,6 +347,8 @@ const getLevelColor = (levelId: string) => {
       return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
     case "advanced":
       return "bg-red-500/20 text-red-400 border-red-500/30";
+    case "practice-test":
+      return "bg-purple-500/20 text-purple-400 border-purple-500/30";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -494,8 +546,8 @@ const LanguagePath = () => {
                                       <Lock className="w-4 h-4" />
                                     </span>
                                   ) : (
-                                    <Link to={`/learn/${languageId}/lesson/${lesson.id}`}>
-                                      {lesson.completed ? "Review" : "Start"}
+                                    <Link to={lesson.id === 100 ? `/learn/${languageId}/practice-test` : `/learn/${languageId}/lesson/${lesson.id}`}>
+                                      {lesson.completed ? "Review" : lesson.id === 100 ? "Take Test" : "Start"}
                                       <Play className="w-4 h-4 ml-1" />
                                     </Link>
                                   )}
