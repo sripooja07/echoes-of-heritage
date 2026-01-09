@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, Mic, Brain, BookOpen, Users, BarChart3 } from "lucide-react";
+import { Menu, X, Globe, Mic, Brain, BookOpen, Users, BarChart3, LogOut, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { path: "/", label: "Home", icon: Globe },
@@ -15,6 +23,12 @@ const navLinks = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, loading, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/50">
@@ -56,11 +70,37 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* CTA Button */}
+          {/* Auth Button */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/join">Join Movement</Link>
-            </Button>
+            {loading ? (
+              <div className="w-24 h-10 rounded-lg bg-secondary animate-pulse" />
+            ) : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="lg" className="gap-2">
+                    <User className="w-4 h-4" />
+                    <span className="max-w-32 truncate">{user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="hero" size="lg" asChild>
+                <Link to="/auth">Login / Sign Up</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,9 +137,28 @@ const Navbar = () => {
               );
             })}
             <div className="pt-4 border-t border-border">
-              <Button variant="hero" size="lg" className="w-full" asChild>
-                <Link to="/join" onClick={() => setIsOpen(false)}>Join the Movement</Link>
-              </Button>
+              {user ? (
+                <div className="space-y-2">
+                  <div className="px-4 py-2 text-sm text-muted-foreground truncate">
+                    {user.email}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full justify-start gap-2"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="hero" size="lg" className="w-full" asChild>
+                  <Link to="/auth" onClick={() => setIsOpen(false)}>
+                    Login / Sign Up
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
