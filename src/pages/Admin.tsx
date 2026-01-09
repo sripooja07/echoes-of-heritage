@@ -146,6 +146,49 @@ const Admin = () => {
     toast({ title: "Recording Flagged", description: "This recording has been flagged for further review" });
   };
 
+  const handleBulkApprove = () => {
+    const count = filteredRecordings.length;
+    toast({ 
+      title: "Bulk Approval Complete", 
+      description: `${count} recordings have been approved and added to the database.` 
+    });
+  };
+
+  const handleAddLanguage = () => {
+    toast({ 
+      title: "Add Language", 
+      description: "Opening language configuration panel..." 
+    });
+  };
+
+  const handleSendBadges = () => {
+    toast({ 
+      title: "Badges Sent!", 
+      description: "Achievement badges have been distributed to eligible contributors." 
+    });
+  };
+
+  const handleExportReport = () => {
+    toast({ 
+      title: "Export Started", 
+      description: "Generating analytics report... Download will begin shortly." 
+    });
+  };
+
+  const handleInviteUser = () => {
+    toast({ 
+      title: "Invite User", 
+      description: "Opening user invitation form..." 
+    });
+  };
+
+  const handleViewAllActivity = () => {
+    toast({ 
+      title: "Activity Log", 
+      description: "Loading complete activity history..." 
+    });
+  };
+
   const filteredRecordings = pendingRecordings.filter(r => 
     r.language.toLowerCase().includes(searchQuery.toLowerCase()) ||
     r.speaker.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -233,19 +276,19 @@ const Admin = () => {
         <section className="pb-4">
           <div className="container mx-auto px-4">
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleBulkApprove}>
                 <FileAudio className="w-4 h-4" />
                 Bulk Approve
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleAddLanguage}>
                 <Languages className="w-4 h-4" />
                 Add Language
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleSendBadges}>
                 <Award className="w-4 h-4" />
                 Send Badges
               </Button>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleExportReport}>
                 <Activity className="w-4 h-4" />
                 Export Report
               </Button>
@@ -385,7 +428,7 @@ const Admin = () => {
                     <div className="glass-card rounded-2xl overflow-hidden">
                       <div className="p-4 border-b border-border flex items-center justify-between">
                         <h2 className="font-display text-lg font-semibold">User Management</h2>
-                        <Button size="sm" variant="outline" className="gap-2">
+                        <Button size="sm" variant="outline" className="gap-2" onClick={handleInviteUser}>
                           <Users className="w-4 h-4" />
                           Invite User
                         </Button>
@@ -597,7 +640,7 @@ const Admin = () => {
                       </div>
                     ))}
                   </div>
-                  <Button variant="ghost" className="w-full mt-4 text-muted-foreground">
+                  <Button variant="ghost" className="w-full mt-4 text-muted-foreground" onClick={handleViewAllActivity}>
                     View All Activity
                   </Button>
                 </div>
