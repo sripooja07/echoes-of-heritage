@@ -72,13 +72,15 @@ const stats = [
   { label: "Pending Reviews", value: "45", change: "-5", icon: Clock },
 ];
 
-const pendingRecordings = [
+const initialPendingRecordings = [
   { id: 1, language: "Cherokee", category: "Word", speaker: "Mary Smith", speakerEmail: "mary@example.com", date: "2024-01-15", duration: "0:04", content: "Osiyo (Hello)", quality: 92 },
   { id: 2, language: "Navajo", category: "Story", speaker: "John Begay", speakerEmail: "john@example.com", date: "2024-01-15", duration: "2:35", content: "Traditional Creation Story", quality: 88 },
   { id: 3, language: "Māori", category: "Song", speaker: "Aroha Te Whare", speakerEmail: "aroha@example.com", date: "2024-01-14", duration: "1:48", content: "Pōkarekare Ana", quality: 95 },
   { id: 4, language: "Welsh", category: "Phrase", speaker: "Gareth Jones", speakerEmail: "gareth@example.com", date: "2024-01-14", duration: "0:12", content: "Bore da (Good morning)", quality: 90 },
   { id: 5, language: "Hawaiian", category: "Word", speaker: "Kaia Kalama", speakerEmail: "kaia@example.com", date: "2024-01-13", duration: "0:06", content: "Aloha (Love/Hello)", quality: 94 },
 ];
+
+type Recording = typeof initialPendingRecordings[0];
 
 const recentUsers = [
   { id: 1, name: "Sarah Johnson", email: "sarah@example.com", role: "Contributor", joined: "2024-01-15", recordings: 24, languages: ["Cherokee", "Navajo"], verified: true, avatar: "👩‍🦰" },
@@ -101,9 +103,13 @@ const Admin = () => {
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [audioProgress, setAudioProgress] = useState(0);
   const [selectedUser, setSelectedUser] = useState<typeof recentUsers[0] | null>(null);
-  const [selectedRecording, setSelectedRecording] = useState<typeof pendingRecordings[0] | null>(null);
+  const [selectedRecording, setSelectedRecording] = useState<Recording | null>(null);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [recordingDialogOpen, setRecordingDialogOpen] = useState(false);
+  
+  // Recording lists state
+  const [pendingRecordings, setPendingRecordings] = useState<Recording[]>(initialPendingRecordings);
+  const [approvedRecordings, setApprovedRecordings] = useState<Recording[]>([]);
   
   // New dialog states
   const [bulkApproveDialogOpen, setBulkApproveDialogOpen] = useState(false);
@@ -112,7 +118,7 @@ const Admin = () => {
   const [exportReportDialogOpen, setExportReportDialogOpen] = useState(false);
   const [approveConfirmDialogOpen, setApproveConfirmDialogOpen] = useState(false);
   const [rejectConfirmDialogOpen, setRejectConfirmDialogOpen] = useState(false);
-  const [pendingActionRecording, setPendingActionRecording] = useState<typeof pendingRecordings[0] | null>(null);
+  const [pendingActionRecording, setPendingActionRecording] = useState<Recording | null>(null);
   
   // Form states
   const [newLanguageName, setNewLanguageName] = useState("");
@@ -123,53 +129,77 @@ const Admin = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedRecordingsForBulk, setSelectedRecordingsForBulk] = useState<number[]>([]);
 
-  const handlePlayRecording = (id: number) => {
+  // Play audio using Speech Synthesis
+  const handlePlayRecording = (id: number, content: string) => {
     if (playingId === id) {
+      // Stop playing
+      window.speechSynthesis.cancel();
       setPlayingId(null);
       setAudioProgress(0);
-      toast({ title: "Playback stopped" });
+      toast({ title: "⏹️ Playback stopped" });
     } else {
+      // Stop any current playback
+      window.speechSynthesis.cancel();
       setPlayingId(id);
       setAudioProgress(0);
-      toast({ title: "🔊 Playing recording...", description: "Audio is now playing" });
       
-      // Simulate audio progress
-      const interval = setInterval(() => {
+      // Create speech utterance
+      const utterance = new SpeechSynthesisUtterance(content);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      
+      // Progress simulation
+      const duration = content.length * 80; // Estimate based on content length
+      const progressInterval = setInterval(() => {
         setAudioProgress(prev => {
           if (prev >= 100) {
-            clearInterval(interval);
-            setPlayingId(null);
-            return 0;
+            clearInterval(progressInterval);
+            return 100;
           }
-          return prev + 10;
+          return prev + 5;
         });
-      }, 300);
+      }, duration / 20);
       
-      // Cleanup after 3 seconds
-      setTimeout(() => {
-        clearInterval(interval);
+      utterance.onend = () => {
+        clearInterval(progressInterval);
         setPlayingId(null);
         setAudioProgress(0);
-      }, 3000);
+        toast({ title: "✅ Playback complete" });
+      };
+      
+      utterance.onerror = () => {
+        clearInterval(progressInterval);
+        setPlayingId(null);
+        setAudioProgress(0);
+        toast({ title: "❌ Playback error", variant: "destructive" });
+      };
+      
+      window.speechSynthesis.speak(utterance);
+      toast({ title: "🔊 Playing audio...", description: `"${content}"` });
     }
   };
 
-  const handleApproveClick = (recording: typeof pendingRecordings[0]) => {
+  const handleApproveClick = (recording: Recording) => {
     setPendingActionRecording(recording);
     setApproveConfirmDialogOpen(true);
   };
 
-  const handleRejectClick = (recording: typeof pendingRecordings[0]) => {
+  const handleRejectClick = (recording: Recording) => {
     setPendingActionRecording(recording);
     setRejectConfirmDialogOpen(true);
   };
 
   const confirmApproveRecording = () => {
+    if (!pendingActionRecording) return;
     setIsProcessing(true);
     setTimeout(() => {
+      // Remove from pending and add to approved
+      setPendingRecordings(prev => prev.filter(r => r.id !== pendingActionRecording.id));
+      setApprovedRecordings(prev => [...prev, pendingActionRecording]);
+      
       toast({ 
         title: "✅ Recording Approved", 
-        description: `"${pendingActionRecording?.content}" has been added to the database.`,
+        description: `"${pendingActionRecording.content}" has been added to the approved list.`,
       });
       setIsProcessing(false);
       setApproveConfirmDialogOpen(false);
@@ -178,11 +208,15 @@ const Admin = () => {
   };
 
   const confirmRejectRecording = () => {
+    if (!pendingActionRecording) return;
     setIsProcessing(true);
     setTimeout(() => {
+      // Remove from pending list
+      setPendingRecordings(prev => prev.filter(r => r.id !== pendingActionRecording.id));
+      
       toast({ 
         title: "❌ Recording Rejected", 
-        description: `The contributor ${pendingActionRecording?.speaker} will be notified.`,
+        description: `"${pendingActionRecording.content}" has been removed. ${pendingActionRecording.speaker} will be notified.`,
         variant: "destructive"
       });
       setIsProcessing(false);
@@ -196,7 +230,7 @@ const Admin = () => {
     setUserDialogOpen(true);
   };
 
-  const handleViewRecording = (recording: typeof pendingRecordings[0]) => {
+  const handleViewRecording = (recording: Recording) => {
     setSelectedRecording(recording);
     setRecordingDialogOpen(true);
   };
@@ -229,6 +263,11 @@ const Admin = () => {
   const confirmBulkApprove = () => {
     setIsProcessing(true);
     setTimeout(() => {
+      // Move selected recordings from pending to approved
+      const toApprove = pendingRecordings.filter(r => selectedRecordingsForBulk.includes(r.id));
+      setPendingRecordings(prev => prev.filter(r => !selectedRecordingsForBulk.includes(r.id)));
+      setApprovedRecordings(prev => [...prev, ...toApprove]);
+      
       toast({ 
         title: "🎉 Bulk Approval Complete", 
         description: `${selectedRecordingsForBulk.length} recordings have been approved and added to the database.` 
@@ -448,6 +487,10 @@ const Admin = () => {
                       <Mic className="w-4 h-4" />
                       Pending ({filteredRecordings.length})
                     </TabsTrigger>
+                    <TabsTrigger value="approved" className="flex-1 md:flex-none gap-2">
+                      <CheckCircle className="w-4 h-4" />
+                      Approved ({approvedRecordings.length})
+                    </TabsTrigger>
                     <TabsTrigger value="users" className="flex-1 md:flex-none gap-2">
                       <Users className="w-4 h-4" />
                       Users
@@ -502,7 +545,7 @@ const Admin = () => {
                                         variant={playingId === recording.id ? "default" : "ghost"} 
                                         size="icon" 
                                         className={`h-8 w-8 ${playingId === recording.id ? "animate-pulse" : ""}`}
-                                        onClick={() => handlePlayRecording(recording.id)}
+                                        onClick={() => handlePlayRecording(recording.id, recording.content)}
                                       >
                                         {playingId === recording.id ? (
                                           <Volume2 className="w-4 h-4" />
@@ -570,6 +613,85 @@ const Admin = () => {
                           </tbody>
                         </table>
                       </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* Approved Recordings */}
+                  <TabsContent value="approved" className="space-y-4">
+                    <div className="glass-card rounded-2xl overflow-hidden">
+                      <div className="p-4 border-b border-border flex items-center justify-between">
+                        <h2 className="font-display text-lg font-semibold">Approved Recordings</h2>
+                        <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30">
+                          {approvedRecordings.length} approved
+                        </Badge>
+                      </div>
+                      {approvedRecordings.length === 0 ? (
+                        <div className="p-8 text-center">
+                          <CheckCircle className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                          <p className="text-muted-foreground">No approved recordings yet</p>
+                          <p className="text-sm text-muted-foreground/70">Approve recordings from the Pending tab</p>
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead className="bg-green-500/10">
+                              <tr>
+                                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Content</th>
+                                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Language</th>
+                                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Speaker</th>
+                                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Quality</th>
+                                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {approvedRecordings.map((recording) => (
+                                <tr key={recording.id} className="border-b border-border/50 hover:bg-secondary/30 transition-colors">
+                                  <td className="p-4">
+                                    <div>
+                                      <p className="font-medium">{recording.content}</p>
+                                      <p className="text-xs text-muted-foreground">{recording.duration} • {recording.category}</p>
+                                    </div>
+                                  </td>
+                                  <td className="p-4">
+                                    <Badge variant="outline" className="bg-green-500/10 border-green-500/30">{recording.language}</Badge>
+                                  </td>
+                                  <td className="p-4 text-muted-foreground">{recording.speaker}</td>
+                                  <td className="p-4">
+                                    <div className="flex items-center gap-2">
+                                      <Progress value={recording.quality} className="w-16 h-2" />
+                                      <span className="text-xs text-muted-foreground">{recording.quality}%</span>
+                                    </div>
+                                  </td>
+                                  <td className="p-4">
+                                    <div className="flex items-center gap-1">
+                                      <Button 
+                                        variant={playingId === recording.id ? "default" : "ghost"} 
+                                        size="icon" 
+                                        className={`h-8 w-8 ${playingId === recording.id ? "animate-pulse" : ""}`}
+                                        onClick={() => handlePlayRecording(recording.id, recording.content)}
+                                      >
+                                        {playingId === recording.id ? (
+                                          <Volume2 className="w-4 h-4" />
+                                        ) : (
+                                          <Play className="w-4 h-4" />
+                                        )}
+                                      </Button>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-8 w-8"
+                                        onClick={() => handleDownloadRecording(recording.id)}
+                                      >
+                                        <Download className="w-4 h-4" />
+                                      </Button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
 
