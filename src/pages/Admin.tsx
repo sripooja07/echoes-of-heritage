@@ -6,13 +6,23 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +56,12 @@ import {
   Languages,
   FileAudio,
   Shield,
-  Calendar
+  Calendar,
+  Plus,
+  FileDown,
+  Volume2,
+  Loader2,
+  Trophy
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -84,36 +99,96 @@ const activityFeed = [
 const Admin = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [playingId, setPlayingId] = useState<number | null>(null);
+  const [audioProgress, setAudioProgress] = useState(0);
   const [selectedUser, setSelectedUser] = useState<typeof recentUsers[0] | null>(null);
   const [selectedRecording, setSelectedRecording] = useState<typeof pendingRecordings[0] | null>(null);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [recordingDialogOpen, setRecordingDialogOpen] = useState(false);
+  
+  // New dialog states
+  const [bulkApproveDialogOpen, setBulkApproveDialogOpen] = useState(false);
+  const [addLanguageDialogOpen, setAddLanguageDialogOpen] = useState(false);
+  const [sendBadgesDialogOpen, setSendBadgesDialogOpen] = useState(false);
+  const [exportReportDialogOpen, setExportReportDialogOpen] = useState(false);
+  const [approveConfirmDialogOpen, setApproveConfirmDialogOpen] = useState(false);
+  const [rejectConfirmDialogOpen, setRejectConfirmDialogOpen] = useState(false);
+  const [pendingActionRecording, setPendingActionRecording] = useState<typeof pendingRecordings[0] | null>(null);
+  
+  // Form states
+  const [newLanguageName, setNewLanguageName] = useState("");
+  const [newLanguageRegion, setNewLanguageRegion] = useState("");
+  const [selectedBadgeType, setSelectedBadgeType] = useState("");
+  const [exportFormat, setExportFormat] = useState("");
+  const [exportDateRange, setExportDateRange] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedRecordingsForBulk, setSelectedRecordingsForBulk] = useState<number[]>([]);
 
   const handlePlayRecording = (id: number) => {
     if (playingId === id) {
       setPlayingId(null);
+      setAudioProgress(0);
       toast({ title: "Playback stopped" });
     } else {
       setPlayingId(id);
-      toast({ title: "Playing recording...", description: "Audio playback simulation" });
-      // Simulate playback ending
-      setTimeout(() => setPlayingId(null), 3000);
+      setAudioProgress(0);
+      toast({ title: "🔊 Playing recording...", description: "Audio is now playing" });
+      
+      // Simulate audio progress
+      const interval = setInterval(() => {
+        setAudioProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setPlayingId(null);
+            return 0;
+          }
+          return prev + 10;
+        });
+      }, 300);
+      
+      // Cleanup after 3 seconds
+      setTimeout(() => {
+        clearInterval(interval);
+        setPlayingId(null);
+        setAudioProgress(0);
+      }, 3000);
     }
   };
 
-  const handleApproveRecording = (id: number) => {
-    toast({ 
-      title: "Recording Approved ✓", 
-      description: "The recording has been added to the database.",
-    });
+  const handleApproveClick = (recording: typeof pendingRecordings[0]) => {
+    setPendingActionRecording(recording);
+    setApproveConfirmDialogOpen(true);
   };
 
-  const handleRejectRecording = (id: number) => {
-    toast({ 
-      title: "Recording Rejected", 
-      description: "The contributor will be notified.",
-      variant: "destructive"
-    });
+  const handleRejectClick = (recording: typeof pendingRecordings[0]) => {
+    setPendingActionRecording(recording);
+    setRejectConfirmDialogOpen(true);
+  };
+
+  const confirmApproveRecording = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast({ 
+        title: "✅ Recording Approved", 
+        description: `"${pendingActionRecording?.content}" has been added to the database.`,
+      });
+      setIsProcessing(false);
+      setApproveConfirmDialogOpen(false);
+      setPendingActionRecording(null);
+    }, 1000);
+  };
+
+  const confirmRejectRecording = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast({ 
+        title: "❌ Recording Rejected", 
+        description: `The contributor ${pendingActionRecording?.speaker} will be notified.`,
+        variant: "destructive"
+      });
+      setIsProcessing(false);
+      setRejectConfirmDialogOpen(false);
+      setPendingActionRecording(null);
+    }, 1000);
   };
 
   const handleViewUser = (user: typeof recentUsers[0]) => {
@@ -147,32 +222,97 @@ const Admin = () => {
   };
 
   const handleBulkApprove = () => {
-    const count = filteredRecordings.length;
-    toast({ 
-      title: "Bulk Approval Complete", 
-      description: `${count} recordings have been approved and added to the database.` 
-    });
+    setSelectedRecordingsForBulk(filteredRecordings.map(r => r.id));
+    setBulkApproveDialogOpen(true);
+  };
+
+  const confirmBulkApprove = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast({ 
+        title: "🎉 Bulk Approval Complete", 
+        description: `${selectedRecordingsForBulk.length} recordings have been approved and added to the database.` 
+      });
+      setIsProcessing(false);
+      setBulkApproveDialogOpen(false);
+      setSelectedRecordingsForBulk([]);
+    }, 1500);
   };
 
   const handleAddLanguage = () => {
-    toast({ 
-      title: "Add Language", 
-      description: "Opening language configuration panel..." 
-    });
+    setNewLanguageName("");
+    setNewLanguageRegion("");
+    setAddLanguageDialogOpen(true);
+  };
+
+  const confirmAddLanguage = () => {
+    if (!newLanguageName.trim()) {
+      toast({ title: "Error", description: "Please enter a language name", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast({ 
+        title: "🌍 Language Added", 
+        description: `${newLanguageName} (${newLanguageRegion || "Global"}) has been added to the platform.` 
+      });
+      setIsProcessing(false);
+      setAddLanguageDialogOpen(false);
+      setNewLanguageName("");
+      setNewLanguageRegion("");
+    }, 1200);
   };
 
   const handleSendBadges = () => {
-    toast({ 
-      title: "Badges Sent!", 
-      description: "Achievement badges have been distributed to eligible contributors." 
-    });
+    setSelectedBadgeType("");
+    setSendBadgesDialogOpen(true);
+  };
+
+  const confirmSendBadges = () => {
+    if (!selectedBadgeType) {
+      toast({ title: "Error", description: "Please select a badge type", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+    setTimeout(() => {
+      const badgeNames: Record<string, string> = {
+        "contributor": "Star Contributor",
+        "milestone": "Milestone Achiever",
+        "quality": "Quality Champion",
+        "pioneer": "Language Pioneer"
+      };
+      toast({ 
+        title: "🏆 Badges Sent!", 
+        description: `${badgeNames[selectedBadgeType]} badges have been distributed to 12 eligible contributors.` 
+      });
+      setIsProcessing(false);
+      setSendBadgesDialogOpen(false);
+      setSelectedBadgeType("");
+    }, 1500);
   };
 
   const handleExportReport = () => {
-    toast({ 
-      title: "Export Started", 
-      description: "Generating analytics report... Download will begin shortly." 
-    });
+    setExportFormat("");
+    setExportDateRange("");
+    setExportReportDialogOpen(true);
+  };
+
+  const confirmExportReport = () => {
+    if (!exportFormat || !exportDateRange) {
+      toast({ title: "Error", description: "Please select format and date range", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+    setTimeout(() => {
+      toast({ 
+        title: "📊 Export Complete", 
+        description: `Analytics report (${exportFormat.toUpperCase()}) for ${exportDateRange} is ready for download.` 
+      });
+      setIsProcessing(false);
+      setExportReportDialogOpen(false);
+      setExportFormat("");
+      setExportDateRange("");
+    }, 2000);
   };
 
   const handleInviteUser = () => {
@@ -357,23 +497,33 @@ const Admin = () => {
                                 </td>
                                 <td className="p-4">
                                   <div className="flex items-center gap-1">
-                                    <Button 
-                                      variant={playingId === recording.id ? "default" : "ghost"} 
-                                      size="icon" 
-                                      className="h-8 w-8"
-                                      onClick={() => handlePlayRecording(recording.id)}
-                                    >
-                                      {playingId === recording.id ? (
-                                        <Pause className="w-4 h-4" />
-                                      ) : (
-                                        <Play className="w-4 h-4" />
+                                    <div className="relative">
+                                      <Button 
+                                        variant={playingId === recording.id ? "default" : "ghost"} 
+                                        size="icon" 
+                                        className={`h-8 w-8 ${playingId === recording.id ? "animate-pulse" : ""}`}
+                                        onClick={() => handlePlayRecording(recording.id)}
+                                      >
+                                        {playingId === recording.id ? (
+                                          <Volume2 className="w-4 h-4" />
+                                        ) : (
+                                          <Play className="w-4 h-4" />
+                                        )}
+                                      </Button>
+                                      {playingId === recording.id && (
+                                        <div className="absolute -bottom-1 left-0 right-0 h-1 bg-secondary rounded-full overflow-hidden">
+                                          <div 
+                                            className="h-full bg-primary transition-all duration-300" 
+                                            style={{ width: `${audioProgress}%` }}
+                                          />
+                                        </div>
                                       )}
-                                    </Button>
+                                    </div>
                                     <Button 
                                       variant="ghost" 
                                       size="icon" 
                                       className="h-8 w-8 text-green-500 hover:text-green-400 hover:bg-green-500/10"
-                                      onClick={() => handleApproveRecording(recording.id)}
+                                      onClick={() => handleApproveClick(recording)}
                                     >
                                       <CheckCircle className="w-4 h-4" />
                                     </Button>
@@ -381,7 +531,7 @@ const Admin = () => {
                                       variant="ghost" 
                                       size="icon" 
                                       className="h-8 w-8 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
-                                      onClick={() => handleRejectRecording(recording.id)}
+                                      onClick={() => handleRejectClick(recording)}
                                     >
                                       <XCircle className="w-4 h-4" />
                                     </Button>
@@ -743,8 +893,8 @@ const Admin = () => {
                 <Button 
                   className="flex-1 gap-2 bg-green-600 hover:bg-green-700"
                   onClick={() => {
-                    handleApproveRecording(selectedRecording.id);
                     setRecordingDialogOpen(false);
+                    handleApproveClick(selectedRecording);
                   }}
                 >
                   <CheckCircle className="w-4 h-4" />
@@ -754,8 +904,8 @@ const Admin = () => {
                   variant="destructive" 
                   className="flex-1 gap-2"
                   onClick={() => {
-                    handleRejectRecording(selectedRecording.id);
                     setRecordingDialogOpen(false);
+                    handleRejectClick(selectedRecording);
                   }}
                 >
                   <XCircle className="w-4 h-4" />
@@ -764,6 +914,340 @@ const Admin = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Approve Confirmation Dialog */}
+      <Dialog open={approveConfirmDialogOpen} onOpenChange={setApproveConfirmDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              Approve Recording
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to approve this recording?
+            </DialogDescription>
+          </DialogHeader>
+          {pendingActionRecording && (
+            <div className="py-4">
+              <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                <p className="font-medium text-lg">{pendingActionRecording.content}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {pendingActionRecording.language} • {pendingActionRecording.speaker}
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                This recording will be added to the public database and available for learners.
+              </p>
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setApproveConfirmDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 gap-2" 
+              onClick={confirmApproveRecording}
+              disabled={isProcessing}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+              {isProcessing ? "Approving..." : "Approve"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reject Confirmation Dialog */}
+      <Dialog open={rejectConfirmDialogOpen} onOpenChange={setRejectConfirmDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-destructive" />
+              Reject Recording
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to reject this recording?
+            </DialogDescription>
+          </DialogHeader>
+          {pendingActionRecording && (
+            <div className="py-4">
+              <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                <p className="font-medium text-lg">{pendingActionRecording.content}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {pendingActionRecording.language} • {pendingActionRecording.speaker}
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4">
+                The contributor will be notified about the rejection and can resubmit.
+              </p>
+            </div>
+          )}
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setRejectConfirmDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              className="gap-2" 
+              onClick={confirmRejectRecording}
+              disabled={isProcessing}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
+              {isProcessing ? "Rejecting..." : "Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Approve Dialog */}
+      <Dialog open={bulkApproveDialogOpen} onOpenChange={setBulkApproveDialogOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileAudio className="w-5 h-5 text-primary" />
+              Bulk Approve Recordings
+            </DialogTitle>
+            <DialogDescription>
+              Review and approve multiple recordings at once
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
+              <p className="text-2xl font-bold text-center">{selectedRecordingsForBulk.length}</p>
+              <p className="text-sm text-muted-foreground text-center">recordings selected for approval</p>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {filteredRecordings.map((recording) => (
+                <div key={recording.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/50">
+                  <Checkbox 
+                    checked={selectedRecordingsForBulk.includes(recording.id)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedRecordingsForBulk(prev => [...prev, recording.id]);
+                      } else {
+                        setSelectedRecordingsForBulk(prev => prev.filter(id => id !== recording.id));
+                      }
+                    }}
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{recording.content}</p>
+                    <p className="text-xs text-muted-foreground">{recording.language} • {recording.speaker}</p>
+                  </div>
+                  <Badge variant="outline" className="text-xs">{recording.quality}%</Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setBulkApproveDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              className="bg-green-600 hover:bg-green-700 gap-2" 
+              onClick={confirmBulkApprove}
+              disabled={isProcessing || selectedRecordingsForBulk.length === 0}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+              {isProcessing ? "Processing..." : `Approve ${selectedRecordingsForBulk.length} Recordings`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Language Dialog */}
+      <Dialog open={addLanguageDialogOpen} onOpenChange={setAddLanguageDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Languages className="w-5 h-5 text-primary" />
+              Add New Language
+            </DialogTitle>
+            <DialogDescription>
+              Add a new endangered language to the platform
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="language-name">Language Name *</Label>
+              <Input 
+                id="language-name"
+                placeholder="e.g., Lakota, Yoruba, Breton..."
+                value={newLanguageName}
+                onChange={(e) => setNewLanguageName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="language-region">Region / Origin</Label>
+              <Select value={newLanguageRegion} onValueChange={setNewLanguageRegion}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select region" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="north-america">North America</SelectItem>
+                  <SelectItem value="south-america">South America</SelectItem>
+                  <SelectItem value="europe">Europe</SelectItem>
+                  <SelectItem value="africa">Africa</SelectItem>
+                  <SelectItem value="asia">Asia</SelectItem>
+                  <SelectItem value="oceania">Oceania</SelectItem>
+                  <SelectItem value="middle-east">Middle East</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="p-3 rounded-lg bg-secondary/50 text-sm text-muted-foreground">
+              <Globe className="w-4 h-4 inline mr-2" />
+              Adding a language creates templates for words, phrases, stories, and songs.
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setAddLanguageDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              className="gap-2" 
+              onClick={confirmAddLanguage}
+              disabled={isProcessing || !newLanguageName.trim()}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+              {isProcessing ? "Adding..." : "Add Language"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Send Badges Dialog */}
+      <Dialog open={sendBadgesDialogOpen} onOpenChange={setSendBadgesDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+              Send Achievement Badges
+            </DialogTitle>
+            <DialogDescription>
+              Reward contributors with achievement badges
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label>Select Badge Type</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { id: "contributor", label: "Star Contributor", icon: "⭐", desc: "Top contributors" },
+                  { id: "milestone", label: "Milestone Achiever", icon: "🏆", desc: "Hit recording goals" },
+                  { id: "quality", label: "Quality Champion", icon: "💎", desc: "High quality scores" },
+                  { id: "pioneer", label: "Language Pioneer", icon: "🌍", desc: "First in a language" },
+                ].map((badge) => (
+                  <div 
+                    key={badge.id}
+                    onClick={() => setSelectedBadgeType(badge.id)}
+                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                      selectedBadgeType === badge.id 
+                        ? "border-primary bg-primary/10" 
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">{badge.icon}</div>
+                    <p className="font-medium text-sm">{badge.label}</p>
+                    <p className="text-xs text-muted-foreground">{badge.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {selectedBadgeType && (
+              <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-sm">
+                <Award className="w-4 h-4 inline mr-2 text-yellow-500" />
+                12 contributors are eligible for this badge
+              </div>
+            )}
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setSendBadgesDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              className="gap-2 bg-yellow-600 hover:bg-yellow-700" 
+              onClick={confirmSendBadges}
+              disabled={isProcessing || !selectedBadgeType}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Award className="w-4 h-4" />}
+              {isProcessing ? "Sending..." : "Send Badges"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Report Dialog */}
+      <Dialog open={exportReportDialogOpen} onOpenChange={setExportReportDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileDown className="w-5 h-5 text-primary" />
+              Export Analytics Report
+            </DialogTitle>
+            <DialogDescription>
+              Generate a comprehensive analytics report
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <div className="space-y-2">
+              <Label>Export Format</Label>
+              <Select value={exportFormat} onValueChange={setExportFormat}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select format" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pdf">PDF Report</SelectItem>
+                  <SelectItem value="csv">CSV Spreadsheet</SelectItem>
+                  <SelectItem value="xlsx">Excel Workbook</SelectItem>
+                  <SelectItem value="json">JSON Data</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Date Range</Label>
+              <Select value={exportDateRange} onValueChange={setExportDateRange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select date range" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="last-7-days">Last 7 Days</SelectItem>
+                  <SelectItem value="last-30-days">Last 30 Days</SelectItem>
+                  <SelectItem value="last-90-days">Last 90 Days</SelectItem>
+                  <SelectItem value="this-year">This Year</SelectItem>
+                  <SelectItem value="all-time">All Time</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Include in Report</Label>
+              <div className="space-y-2">
+                {[
+                  "Recording statistics",
+                  "User growth metrics", 
+                  "Language coverage",
+                  "Quality analysis"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Checkbox defaultChecked id={`include-${i}`} />
+                    <Label htmlFor={`include-${i}`} className="text-sm font-normal">{item}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setExportReportDialogOpen(false)} disabled={isProcessing}>
+              Cancel
+            </Button>
+            <Button 
+              className="gap-2" 
+              onClick={confirmExportReport}
+              disabled={isProcessing || !exportFormat || !exportDateRange}
+            >
+              {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {isProcessing ? "Generating..." : "Export Report"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
