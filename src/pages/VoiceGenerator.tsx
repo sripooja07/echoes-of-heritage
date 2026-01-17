@@ -10,13 +10,27 @@ import { Brain, Play, Download, Volume2, Sparkles, Pause, Square } from "lucide-
 import { toast } from "@/hooks/use-toast";
 
 const languages = [
+  // Original languages
   { id: "cherokee", name: "Cherokee", speakers: "2,000" },
   { id: "maori", name: "Māori", speakers: "50,000" },
   { id: "navajo", name: "Navajo", speakers: "170,000" },
   { id: "welsh", name: "Welsh", speakers: "750,000" },
   { id: "basque", name: "Basque", speakers: "750,000" },
   { id: "hawaiian", name: "Hawaiian", speakers: "24,000" },
+  // Asian Languages
   { id: "ainu", name: "Ainu", speakers: "10" },
+  { id: "tibetan", name: "Tibetan", speakers: "1,200,000" },
+  { id: "odia", name: "Odia", speakers: "35,000,000" },
+  { id: "buryat", name: "Buryat", speakers: "265,000" },
+  { id: "khmer", name: "Khmer", speakers: "16,000,000" },
+  { id: "dzongkha", name: "Dzongkha", speakers: "640,000" },
+  { id: "sinhala", name: "Sinhala", speakers: "17,000,000" },
+  { id: "shan", name: "Shan", speakers: "3,300,000" },
+  { id: "lepcha", name: "Lepcha", speakers: "50,000" },
+  { id: "newari", name: "Newari", speakers: "860,000" },
+  { id: "mizo", name: "Mizo", speakers: "830,000" },
+  { id: "konkani", name: "Konkani", speakers: "2,500,000" },
+  // Critically Endangered
   { id: "yuchi", name: "Yuchi", speakers: "4" },
   { id: "livonian", name: "Livonian", speakers: "20" },
   { id: "siletz", name: "Siletz Dee-ni", speakers: "1" },

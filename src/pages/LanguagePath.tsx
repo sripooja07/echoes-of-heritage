@@ -322,6 +322,295 @@ const languageData: Record<string, {
       },
     ],
   },
+  // Asian Languages
+  ainu: {
+    name: "Ainu",
+    image: "🗾",
+    description: "Learn Ainu, the endangered language of the indigenous Ainu people of Japan.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Start with Ainu pronunciation, basic greetings, and essential vocabulary.",
+        lessons: [
+          { id: 1, title: "Ainu Sounds", description: "Learn the unique Ainu phonetic system", duration: "15 min", completed: false, locked: false },
+          { id: 2, title: "Basic Greetings", description: "Irankarapte (Hello) and more", duration: "20 min", completed: false, locked: false },
+          { id: 3, title: "Numbers & Counting", description: "Ainu numeral system", duration: "20 min", completed: false, locked: false },
+          { id: 4, title: "Nature Words", description: "Words for animals and nature", duration: "25 min", completed: false, locked: false },
+          { id: 5, title: "Family Terms", description: "Family relationship vocabulary", duration: "20 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build sentences and learn about Ainu culture through language.",
+        lessons: [
+          { id: 6, title: "Sentence Structure", description: "Basic Ainu sentences", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Verb Forms", description: "Understanding Ainu verbs", duration: "35 min", completed: false, locked: false },
+          { id: 8, title: "Daily Life", description: "Everyday vocabulary", duration: "25 min", completed: false, locked: false },
+          { id: 9, title: "Kamuy Words", description: "Spiritual vocabulary", duration: "30 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Master Yukar (epic poems) and traditional Ainu oral literature.",
+        lessons: [
+          { id: 10, title: "Yukar Introduction", description: "Epic poems and stories", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Traditional Songs", description: "Upopo and other songs", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Cultural Fluency", description: "Deep Ainu cultural understanding", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Ainu knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Ainu skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
+  tibetan: {
+    name: "Tibetan",
+    image: "🏔️",
+    description: "Learn Tibetan, the classical language of Buddhism and the Himalayan region.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Master the Tibetan script, pronunciation, and basic phrases.",
+        lessons: [
+          { id: 1, title: "Tibetan Script Basics", description: "Introduction to Uchen script", duration: "20 min", completed: false, locked: false },
+          { id: 2, title: "Vowels & Consonants", description: "30 consonants and vowel marks", duration: "25 min", completed: false, locked: false },
+          { id: 3, title: "Greetings", description: "Tashi delek and daily phrases", duration: "20 min", completed: false, locked: false },
+          { id: 4, title: "Numbers", description: "Counting in Tibetan", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Basic Vocabulary", description: "Essential everyday words", duration: "25 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build conversational skills and understand Tibetan grammar.",
+        lessons: [
+          { id: 6, title: "Sentence Structure", description: "SOV word order", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Verb System", description: "Tenses and aspects", duration: "35 min", completed: false, locked: false },
+          { id: 8, title: "Honorific Speech", description: "Formal and informal registers", duration: "30 min", completed: false, locked: false },
+          { id: 9, title: "Daily Conversations", description: "Practical dialogue", duration: "35 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Read classical texts and engage with Buddhist literature.",
+        lessons: [
+          { id: 10, title: "Classical Tibetan", description: "Literary language", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Buddhist Terms", description: "Religious vocabulary", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Poetry & Literature", description: "Traditional writings", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Tibetan knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Tibetan skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
+  odia: {
+    name: "Odia",
+    image: "🛕",
+    description: "Learn Odia, the classical language of Odisha, India with ancient literary tradition.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Learn the beautiful Odia script and essential phrases.",
+        lessons: [
+          { id: 1, title: "Odia Script", description: "Curved letters of Odia", duration: "25 min", completed: false, locked: false },
+          { id: 2, title: "Vowels & Consonants", description: "Complete alphabet", duration: "25 min", completed: false, locked: false },
+          { id: 3, title: "Greetings", description: "Namaskar and daily phrases", duration: "20 min", completed: false, locked: false },
+          { id: 4, title: "Numbers", description: "Counting in Odia", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Basic Words", description: "Essential vocabulary", duration: "25 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build sentences and understand Odia grammar patterns.",
+        lessons: [
+          { id: 6, title: "Sentence Formation", description: "Basic sentence patterns", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Verb Conjugation", description: "Tenses in Odia", duration: "35 min", completed: false, locked: false },
+          { id: 8, title: "Postpositions", description: "Case markers", duration: "25 min", completed: false, locked: false },
+          { id: 9, title: "Conversations", description: "Daily dialogues", duration: "30 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Explore Odia literature and the rich poetic tradition.",
+        lessons: [
+          { id: 10, title: "Classical Literature", description: "Sarala Das and epics", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Modern Odia", description: "Contemporary usage", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Cultural Expression", description: "Music and poetry", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Odia knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Odia skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
+  buryat: {
+    name: "Buryat",
+    image: "🐎",
+    description: "Learn Buryat, a Mongolic language of Siberia with rich nomadic heritage.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Start with Buryat sounds, greetings, and essential vocabulary.",
+        lessons: [
+          { id: 1, title: "Cyrillic for Buryat", description: "Script and pronunciation", duration: "20 min", completed: false, locked: false },
+          { id: 2, title: "Greetings", description: "Sain baina uu and more", duration: "20 min", completed: false, locked: false },
+          { id: 3, title: "Numbers", description: "Counting in Buryat", duration: "20 min", completed: false, locked: false },
+          { id: 4, title: "Family Words", description: "Kinship vocabulary", duration: "25 min", completed: false, locked: false },
+          { id: 5, title: "Nature & Animals", description: "Steppe vocabulary", duration: "25 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build sentences and learn Buryat agglutinative grammar.",
+        lessons: [
+          { id: 6, title: "Sentence Structure", description: "SOV word order", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Case System", description: "Grammatical cases", duration: "40 min", completed: false, locked: false },
+          { id: 8, title: "Verbs", description: "Aspect and tense", duration: "35 min", completed: false, locked: false },
+          { id: 9, title: "Daily Life", description: "Everyday conversations", duration: "30 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Master Buryat folklore, epics, and cultural traditions.",
+        lessons: [
+          { id: 10, title: "Geser Epic", description: "Traditional epic poetry", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Shamanic Vocabulary", description: "Spiritual traditions", duration: "40 min", completed: false, locked: false },
+          { id: 12, title: "Cultural Mastery", description: "Deep cultural understanding", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Buryat knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Buryat skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
+  khmer: {
+    name: "Khmer",
+    image: "🛕",
+    description: "Learn Khmer, the official language of Cambodia with ancient Angkorian roots.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Master the Khmer script and basic communication.",
+        lessons: [
+          { id: 1, title: "Khmer Script Intro", description: "One of the oldest scripts", duration: "25 min", completed: false, locked: false },
+          { id: 2, title: "Consonants", description: "33 consonant letters", duration: "30 min", completed: false, locked: false },
+          { id: 3, title: "Vowels & Signs", description: "Complex vowel system", duration: "25 min", completed: false, locked: false },
+          { id: 4, title: "Greetings", description: "Choum reap suor", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Numbers", description: "Counting in Khmer", duration: "20 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build conversational skills and understand Khmer grammar.",
+        lessons: [
+          { id: 6, title: "Sentence Patterns", description: "SVO structure", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Classifiers", description: "Noun classifiers", duration: "25 min", completed: false, locked: false },
+          { id: 8, title: "Polite Speech", description: "Honorific particles", duration: "30 min", completed: false, locked: false },
+          { id: 9, title: "Daily Dialogues", description: "Practical conversations", duration: "35 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Explore Khmer literature and the legacy of Angkor.",
+        lessons: [
+          { id: 10, title: "Classical Khmer", description: "Inscriptions and old texts", duration: "45 min", completed: false, locked: false },
+          { id: 11, title: "Reamker", description: "Khmer Ramayana epic", duration: "45 min", completed: false, locked: false },
+          { id: 12, title: "Modern Literature", description: "Contemporary Khmer", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Khmer knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Khmer skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
+  dzongkha: {
+    name: "Dzongkha",
+    image: "🏯",
+    description: "Learn Dzongkha, the national language of Bhutan, the Land of the Thunder Dragon.",
+    levels: [
+      {
+        id: "beginner",
+        name: "Beginner",
+        description: "Learn Dzongkha script based on Tibetan and basic phrases.",
+        lessons: [
+          { id: 1, title: "Dzongkha Script", description: "Tibetan-based writing", duration: "25 min", completed: false, locked: false },
+          { id: 2, title: "Pronunciation", description: "Tones and sounds", duration: "20 min", completed: false, locked: false },
+          { id: 3, title: "Greetings", description: "Kuzu zangpo la", duration: "20 min", completed: false, locked: false },
+          { id: 4, title: "Numbers", description: "Counting system", duration: "20 min", completed: false, locked: false },
+          { id: 5, title: "Basic Vocabulary", description: "Essential words", duration: "25 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "intermediate",
+        name: "Intermediate",
+        description: "Build conversational skills in the language of Gross National Happiness.",
+        lessons: [
+          { id: 6, title: "Sentence Structure", description: "SOV patterns", duration: "30 min", completed: false, locked: false },
+          { id: 7, title: "Honorifics", description: "Polite speech levels", duration: "35 min", completed: false, locked: false },
+          { id: 8, title: "Daily Life", description: "Practical vocabulary", duration: "25 min", completed: false, locked: false },
+          { id: 9, title: "Conversations", description: "Real-world dialogues", duration: "30 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        description: "Explore Bhutanese literature, Buddhism, and cultural traditions.",
+        lessons: [
+          { id: 10, title: "Buddhist Vocabulary", description: "Religious terms", duration: "40 min", completed: false, locked: false },
+          { id: 11, title: "Traditional Stories", description: "Folk tales and legends", duration: "45 min", completed: false, locked: false },
+          { id: 12, title: "Cultural Mastery", description: "Deep Bhutanese understanding", duration: "50 min", completed: false, locked: false },
+        ],
+      },
+      {
+        id: "practice-test",
+        name: "Final Practice Test",
+        description: "Test your Dzongkha knowledge with a comprehensive exam covering all levels.",
+        lessons: [
+          { id: 100, title: "Comprehensive Practice Test", description: "Complete assessment of all Dzongkha skills", duration: "60 min", completed: false, locked: false },
+        ],
+      },
+    ],
+  },
 };
 
 const getLevelIcon = (levelId: string) => {

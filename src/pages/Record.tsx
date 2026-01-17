@@ -27,6 +27,23 @@ const regions = [
   "Oceania",
 ];
 
+// Suggested languages for quick selection
+const suggestedLanguages = [
+  // North America
+  "Cherokee", "Navajo", "Yuchi", "Siletz Dee-ni", "Patwin",
+  // Oceania
+  "Māori", "Hawaiian", "Tanema", "Liki",
+  // Europe
+  "Welsh", "Basque", "Livonian", "Ter Sami",
+  // Asia
+  "Ainu", "Tibetan", "Odia", "Buryat", "Khmer", "Dzongkha", 
+  "Sinhala", "Shan", "Lepcha", "Newari", "Mizo", "Konkani", "Dumi",
+  // Africa
+  "Njerep", "Ongota",
+  // South America
+  "Taushiro", "Tinigua", "Chamicuro",
+];
+
 const Record = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecording, setHasRecording] = useState(false);
