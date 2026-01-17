@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -61,9 +62,11 @@ import {
   FileDown,
   Volume2,
   Loader2,
-  Trophy
+  Trophy,
+  AlertTriangle
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const stats = [
   { label: "Total Recordings", value: "12,450", change: "+12%", icon: Mic },
@@ -99,6 +102,9 @@ const activityFeed = [
 ];
 
 const Admin = () => {
+  const { user, loading, isAdmin } = useAuth();
+  const navigate = useNavigate();
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [audioProgress, setAudioProgress] = useState(0);
@@ -128,6 +134,51 @@ const Admin = () => {
   const [exportDateRange, setExportDateRange] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedRecordingsForBulk, setSelectedRecordingsForBulk] = useState<number[]>([]);
+
+  // Redirect non-admins
+  useEffect(() => {
+    if (!loading && (!user || !isAdmin)) {
+      toast({
+        title: "Access Denied",
+        description: "You need admin privileges to access this page.",
+        variant: "destructive",
+      });
+      navigate("/");
+    }
+  }, [user, loading, isAdmin, navigate]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Show access denied if not admin
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <main className="pt-32 pb-20 px-4">
+          <div className="container mx-auto max-w-md text-center">
+            <div className="glass-card rounded-3xl p-8">
+              <AlertTriangle className="w-16 h-16 text-destructive mx-auto mb-4" />
+              <h1 className="font-display text-2xl font-bold mb-2">Access Denied</h1>
+              <p className="text-muted-foreground mb-6">
+                You need admin privileges to access the dashboard.
+              </p>
+              <Button variant="hero" onClick={() => navigate("/")}>
+                Go Home
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   // Play audio using Speech Synthesis
   const handlePlayRecording = (id: number, content: string) => {

@@ -7,13 +7,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Globe, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Globe, Mail, Lock, User, ArrowRight, Loader2, Shield, Users } from "lucide-react";
+
+type UserRole = 'user' | 'admin';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [selectedRole, setSelectedRole] = useState<UserRole>('user');
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
@@ -32,7 +35,7 @@ const Auth = () => {
         });
         navigate("/");
       } else {
-        const { error } = await signUp(email, password, displayName);
+        const { error } = await signUp(email, password, displayName, selectedRole);
         if (error) throw error;
         toast({
           title: "Account created!",
@@ -84,22 +87,57 @@ const Auth = () => {
 
             <form onSubmit={handleSubmit} className="space-y-5">
               {!isLogin && (
-                <div className="space-y-2">
-                  <Label htmlFor="displayName" className="text-sm font-medium">
-                    Display Name
-                  </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      id="displayName"
-                      type="text"
-                      placeholder="Your name"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      className="pl-11 h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary"
-                    />
+                <>
+                  {/* Role Selection */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">I am a</Label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRole('user')}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-300 ${
+                          selectedRole === 'user'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-border/50 bg-secondary/50 text-muted-foreground hover:border-primary/50'
+                        }`}
+                      >
+                        <Users className="w-6 h-6" />
+                        <span className="text-sm font-medium">User</span>
+                        <span className="text-xs opacity-70">Learn & Contribute</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedRole('admin')}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-300 ${
+                          selectedRole === 'admin'
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-border/50 bg-secondary/50 text-muted-foreground hover:border-primary/50'
+                        }`}
+                      >
+                        <Shield className="w-6 h-6" />
+                        <span className="text-sm font-medium">Admin</span>
+                        <span className="text-xs opacity-70">Manage Content</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName" className="text-sm font-medium">
+                      Display Name
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input
+                        id="displayName"
+                        type="text"
+                        placeholder="Your name"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        className="pl-11 h-12 rounded-xl bg-secondary/50 border-border/50 focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
               <div className="space-y-2">
