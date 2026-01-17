@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Heart, Mic, BookOpen } from "lucide-react";
-
+import { Heart, Mic, BookOpen } from "lucide-react";
 const CTASection = () => {
-  return (
-    <section className="py-24 md:py-32 relative overflow-hidden">
+  return <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/10" />
       <div className="absolute inset-0 wave-pattern opacity-20" />
@@ -63,13 +61,11 @@ const CTASection = () => {
           <Button variant="hero" size="xl" asChild>
             <Link to="/join" className="gap-3">
               Get Started Now
-              <ArrowRight className="w-5 h-5" />
+              
             </Link>
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CTASection;
