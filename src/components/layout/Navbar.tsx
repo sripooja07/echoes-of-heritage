@@ -11,19 +11,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const navLinks = [
+const baseNavLinks = [
   { path: "/", label: "Home", icon: Globe },
   { path: "/about", label: "About", icon: Users },
   { path: "/record", label: "Record", icon: Mic },
   { path: "/voice-generator", label: "AI Voice", icon: Brain },
   { path: "/learn", label: "Learn", icon: BookOpen },
-  { path: "/admin", label: "Dashboard", icon: BarChart3 },
 ];
+
+const adminNavLink = { path: "/admin", label: "Dashboard", icon: BarChart3 };
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, isAdmin } = useAuth();
+
+  // Build nav links based on admin status
+  const navLinks = isAdmin ? [...baseNavLinks, adminNavLink] : baseNavLinks;
 
   const handleSignOut = async () => {
     await signOut();
