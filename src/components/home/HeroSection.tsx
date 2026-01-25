@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Mic, Play, ArrowRight, Sparkles } from "lucide-react";
+import { Mic, Play, ArrowRight, Sparkles, Shield, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
+  const { user, isAdmin, loading } = useAuth();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Effects */}
@@ -50,7 +53,7 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 animate-fade-in" style={{ animationDelay: '0.3s' }}>
             <Button variant="hero" size="xl" asChild>
               <Link to="/record" className="gap-3">
                 <Mic className="w-5 h-5" />
@@ -64,6 +67,36 @@ const HeroSection = () => {
                 Explore Languages
               </Link>
             </Button>
+          </div>
+
+          {/* Auth & Role Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in" style={{ animationDelay: '0.35s' }}>
+            {!loading && !user && (
+              <Button variant="glow" size="lg" asChild>
+                <Link to="/auth" className="gap-2">
+                  <User className="w-5 h-5" />
+                  Sign Up / Login
+                </Link>
+              </Button>
+            )}
+            {!loading && user && (
+              <>
+                {isAdmin && (
+                  <Button variant="glow" size="lg" asChild>
+                    <Link to="/admin" className="gap-2">
+                      <Shield className="w-5 h-5" />
+                      Admin Dashboard
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="glass" size="lg" asChild>
+                  <Link to="/profile" className="gap-2">
+                    <User className="w-5 h-5" />
+                    My Profile
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Stats */}
