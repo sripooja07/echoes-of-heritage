@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Globe, Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Globe, Mail, Lock, User, ArrowRight, Loader2, Shield } from "lucide-react";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -158,7 +158,7 @@ const Auth = () => {
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            <div className="mt-6 text-center space-y-3">
               <button
                 type="button"
                 onClick={() => setIsLogin(!isLogin)}
@@ -176,6 +176,17 @@ const Auth = () => {
                   </>
                 )}
               </button>
+              
+              <div className="pt-3 border-t border-border/50">
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin-login")}
+                  className="text-sm text-muted-foreground hover:text-destructive transition-colors flex items-center justify-center gap-2 mx-auto"
+                >
+                  <Shield className="w-4 h-4" />
+                  Admin Login
+                </button>
+              </div>
             </div>
           </div>
         </div>

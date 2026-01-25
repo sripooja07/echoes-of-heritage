@@ -16,6 +16,7 @@ import Admin from "./pages/Admin";
 import Join from "./pages/Join";
 import Impact from "./pages/Impact";
 import Auth from "./pages/Auth";
+import AdminAuth from "./pages/AdminAuth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/join" element={<Join />} />
             <Route path="/impact" element={<Impact />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/admin-login" element={<AdminAuth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
