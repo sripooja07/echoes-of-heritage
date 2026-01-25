@@ -70,10 +70,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Security: All new users are assigned 'user' role only
-  // Admin roles must be assigned through a separate admin-controlled process
+  // User roles are now automatically created by database trigger on signup
   const signUp = async (email: string, password: string, displayName?: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -83,17 +82,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
       },
     });
-    
-    // If signup successful and we have a user, create the role as 'user' only
-    if (!error && data.user) {
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({ user_id: data.user.id, role: 'user' as AppRole });
-      
-      if (roleError) {
-        console.error('Error creating user role:', roleError);
-      }
-    }
     
     return { error };
   };
