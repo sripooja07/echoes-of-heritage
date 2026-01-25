@@ -10,7 +10,7 @@ interface AuthContextType {
   loading: boolean;
   userRole: AppRole | null;
   isAdmin: boolean;
-  signUp: (email: string, password: string, displayName?: string, role?: AppRole) => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -70,7 +70,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName?: string, role: AppRole = 'user') => {
+  // Security: All new users are assigned 'user' role only
+  // Admin roles must be assigned through a separate admin-controlled process
+  const signUp = async (email: string, password: string, displayName?: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -82,11 +84,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       },
     });
     
-    // If signup successful and we have a user, create the role
+    // If signup successful and we have a user, create the role as 'user' only
     if (!error && data.user) {
       const { error: roleError } = await supabase
         .from('user_roles')
-        .insert({ user_id: data.user.id, role });
+        .insert({ user_id: data.user.id, role: 'user' as AppRole });
       
       if (roleError) {
         console.error('Error creating user role:', roleError);
