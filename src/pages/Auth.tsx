@@ -244,13 +244,23 @@ const Auth = () => {
             </form>
 
             <div className="mt-6 text-center space-y-3">
+              {isLogin && (
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  Forgot your password?
+                </button>
+              )}
+              
               <button
                 type="button"
                 onClick={() => {
                   setIsLogin(!isLogin);
                   setErrors({});
                 }}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors block w-full"
               >
                 {isLogin ? (
                   <>
