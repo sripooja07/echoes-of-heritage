@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Globe, BookOpen, GraduationCap, User, LogOut, BarChart3 } from "lucide-react";
+import { Menu, X, Globe, Mic, Brain, BookOpen, Users, BarChart3, LogOut, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -13,8 +13,10 @@ import {
 
 const baseNavLinks = [
   { path: "/", label: "Home", icon: Globe },
-  { path: "/learn", label: "Lessons", icon: BookOpen },
-  { path: "/practice", label: "Practice", icon: GraduationCap },
+  { path: "/about", label: "About", icon: Users },
+  { path: "/record", label: "Record", icon: Mic },
+  { path: "/voice-generator", label: "AI Voice", icon: Brain },
+  { path: "/learn", label: "Learn", icon: BookOpen },
 ];
 
 const adminNavLink = { path: "/admin", label: "Dashboard", icon: BarChart3 };
