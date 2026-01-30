@@ -144,11 +144,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      demote_admin_to_user: {
+        Args: { _target_user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      promote_user_to_admin: {
+        Args: { _target_user_id: string }
         Returns: boolean
       }
     }
