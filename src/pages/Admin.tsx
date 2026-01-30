@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import UserManagement from "@/components/admin/UserManagement";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -546,6 +547,10 @@ const Admin = () => {
                       <Users className="w-4 h-4" />
                       Users
                     </TabsTrigger>
+                    <TabsTrigger value="roles" className="flex-1 md:flex-none gap-2">
+                      <Shield className="w-4 h-4" />
+                      Roles
+                    </TabsTrigger>
                     <TabsTrigger value="analytics" className="flex-1 md:flex-none gap-2">
                       <BarChart3 className="w-4 h-4" />
                       Analytics
@@ -873,6 +878,11 @@ const Admin = () => {
                         </table>
                       </div>
                     </div>
+                  </TabsContent>
+
+                  {/* Role Management */}
+                  <TabsContent value="roles" className="space-y-4">
+                    <UserManagement />
                   </TabsContent>
 
                   {/* Analytics */}
