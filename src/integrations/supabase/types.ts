@@ -14,6 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      languages: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          native_name: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          native_name?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          native_name?: string | null
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          content: string
+          created_at: string
+          difficulty: string
+          example_sentences: Json | null
+          id: string
+          language_id: string
+          order_index: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          difficulty?: string
+          example_sentences?: Json | null
+          id?: string
+          language_id: string
+          order_index?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          difficulty?: string
+          example_sentences?: Json | null
+          id?: string
+          language_id?: string
+          order_index?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
