@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_action_logs: {
+        Row: {
+          action_type: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
       languages: {
         Row: {
           code: string
@@ -118,6 +148,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_logs: {
+        Row: {
+          accessed_at: string
+          id: string
+          language_id: string | null
+          lesson_id: string | null
+          section_name: string
+          section_type: string
+          time_spent_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          accessed_at?: string
+          id?: string
+          language_id?: string | null
+          lesson_id?: string | null
+          section_name: string
+          section_type: string
+          time_spent_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          accessed_at?: string
+          id?: string
+          language_id?: string | null
+          lesson_id?: string | null
+          section_name?: string
+          section_type?: string
+          time_spent_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activity_logs_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_activity_logs_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -138,6 +216,78 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      voice_notes: {
+        Row: {
+          audio_url: string
+          created_at: string
+          id: string
+          language_id: string | null
+          language_name: string
+          lesson_id: string | null
+          lesson_name: string | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["voice_note_status"]
+          submitted_at: string
+          transcription: string | null
+          translation: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          id?: string
+          language_id?: string | null
+          language_name: string
+          lesson_id?: string | null
+          lesson_name?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["voice_note_status"]
+          submitted_at?: string
+          transcription?: string | null
+          translation?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          id?: string
+          language_id?: string | null
+          language_name?: string
+          lesson_id?: string | null
+          lesson_name?: string | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["voice_note_status"]
+          submitted_at?: string
+          transcription?: string | null
+          translation?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_notes_language_id_fkey"
+            columns: ["language_id"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_notes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -162,6 +312,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      voice_note_status: "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -290,6 +441,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      voice_note_status: ["pending", "approved", "rejected"],
     },
   },
 } as const
