@@ -1,14 +1,10 @@
-import { useState } from "react";
 import { Globe, Users, Mic, BookOpen, LucideIcon } from "lucide-react";
-import ImpactDialog from "@/components/dialogs/ImpactDialog";
 
 interface Impact {
   icon: LucideIcon;
   value: string;
   label: string;
   description: string;
-  details: string;
-  stats: { label: string; value: string }[];
 }
 
 const impacts: Impact[] = [
@@ -17,64 +13,28 @@ const impacts: Impact[] = [
     value: "150+",
     label: "Languages Archived",
     description: "Digital preservation of endangered languages from around the world",
-    details: "Our archive spans languages from every continent, including critically endangered languages with fewer than 100 speakers remaining. Each language is documented with audio recordings, transcriptions, and cultural context.",
-    stats: [
-      { label: "Continents", value: "6" },
-      { label: "Countries", value: "45" },
-      { label: "Critically Endangered", value: "32" },
-      { label: "Growing Monthly", value: "5+" },
-    ],
   },
   {
     icon: Users,
     value: "10,000+",
     label: "Community Members",
     description: "Native speakers, learners, and researchers working together",
-    details: "Our community includes elders preserving their mother tongue, youth reconnecting with heritage, academic researchers, and volunteers from around the world. Together, we're building the largest collaborative language preservation network.",
-    stats: [
-      { label: "Native Speakers", value: "4,500+" },
-      { label: "Active Learners", value: "3,200+" },
-      { label: "Researchers", value: "850+" },
-      { label: "Volunteers", value: "1,500+" },
-    ],
   },
   {
     icon: Mic,
     value: "50,000+",
     label: "Audio Recordings",
     description: "Words, phrases, stories, and songs captured for future generations",
-    details: "Every recording is a piece of cultural heritage preserved forever. Our archive includes everyday vocabulary, traditional stories, folk songs, ceremonial language, and conversations that capture the living essence of each language.",
-    stats: [
-      { label: "Words & Phrases", value: "35K+" },
-      { label: "Stories", value: "8K+" },
-      { label: "Songs", value: "4K+" },
-      { label: "Conversations", value: "3K+" },
-    ],
   },
   {
     icon: BookOpen,
     value: "500+",
     label: "Learning Modules",
     description: "Interactive lessons helping communities reconnect with their heritage",
-    details: "From beginner vocabulary to advanced grammar, our learning modules are designed with community input to ensure cultural authenticity. Each module includes audio from native speakers, interactive exercises, and cultural context.",
-    stats: [
-      { label: "Beginner Courses", value: "180+" },
-      { label: "Intermediate", value: "200+" },
-      { label: "Advanced", value: "120+" },
-      { label: "Cultural Context", value: "75+" },
-    ],
   },
 ];
 
 const ImpactSection = () => {
-  const [selectedImpact, setSelectedImpact] = useState<Impact | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-
-  const handleImpactClick = (impact: Impact) => {
-    setSelectedImpact(impact);
-    setDialogOpen(true);
-  };
-
   return (
     <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Background Pattern */}
@@ -100,10 +60,9 @@ const ImpactSection = () => {
           {impacts.map((impact, index) => {
             const Icon = impact.icon;
             return (
-              <button
+              <div
                 key={index}
-                onClick={() => handleImpactClick(impact)}
-                className="group relative text-center animate-fade-in cursor-pointer"
+                className="group relative text-center animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {/* Card */}
@@ -127,13 +86,8 @@ const ImpactSection = () => {
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     {impact.description}
                   </p>
-
-                  {/* Click hint */}
-                  <span className="text-xs text-primary/60 mt-4 block opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Click for details →
-                  </span>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
@@ -148,12 +102,6 @@ const ImpactSection = () => {
           </blockquote>
         </div>
       </div>
-
-      <ImpactDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        impact={selectedImpact}
-      />
     </section>
   );
 };
