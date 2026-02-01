@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
 
 interface VocabularyItem {
   word: string;
@@ -120,6 +121,7 @@ const Lesson = () => {
   const { languageId, lessonId } = useParams<{ languageId: string; lessonId: string }>();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { trackActivity, endActivity } = useActivityTracker();
   
   const [currentStep, setCurrentStep] = useState<"vocabulary" | "quiz" | "complete">("vocabulary");
   const [vocabIndex, setVocabIndex] = useState(0);
@@ -131,6 +133,19 @@ const Lesson = () => {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   const lesson = languageId && lessonId ? lessonData[languageId]?.[parseInt(lessonId)] : null;
+
+  // Track activity on mount
+  useEffect(() => {
+    if (lesson) {
+      trackActivity({
+        sectionName: lesson.title,
+        sectionType: "lesson",
+      });
+    }
+    return () => {
+      endActivity();
+    };
+  }, [lesson?.title]);
 
   const playPronunciation = async (word: string) => {
     if (isPlaying) {

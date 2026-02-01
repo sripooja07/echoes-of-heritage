@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mic, Square, Play, Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Mic, Square, Play, Upload, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
 
 const categories = [
   "Word / Vocabulary",
@@ -45,6 +49,10 @@ const suggestedLanguages = [
 ];
 
 const Record = () => {
+  const { user } = useAuth();
+  const { trackActivity, endActivity } = useActivityTracker();
+  const queryClient = useQueryClient();
+  
   const [isRecording, setIsRecording] = useState(false);
   const [hasRecording, setHasRecording] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,6 +62,71 @@ const Record = () => {
     transcription: "",
     translation: "",
     speakerAge: "",
+    lessonName: "",
+  });
+
+  // Track activity on mount
+  useEffect(() => {
+    trackActivity({
+      sectionName: "Voice Recording",
+      sectionType: "record",
+    });
+    return () => {
+      endActivity();
+    };
+  }, []);
+
+  // Fetch languages from database
+  const { data: languages } = useQuery({
+    queryKey: ["languages"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("languages").select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Submit voice note mutation
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("You must be logged in to submit recordings");
+
+      const { error } = await supabase.from("voice_notes").insert({
+        user_id: user.id,
+        language_name: formData.language,
+        lesson_name: formData.lessonName || formData.category,
+        audio_url: "placeholder", // In production, this would be a real audio file URL
+        transcription: formData.transcription,
+        translation: formData.translation,
+        status: "pending",
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["voice-notes"] });
+      toast({
+        title: "Recording submitted!",
+        description: "Thank you for your contribution. An admin will review it shortly.",
+      });
+      setHasRecording(false);
+      setFormData({
+        language: "",
+        region: "",
+        category: "",
+        transcription: "",
+        translation: "",
+        speakerAge: "",
+        lessonName: "",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Submission failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   const handleStartRecording = () => {
@@ -82,19 +155,17 @@ const Record = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Recording submitted!",
-      description: "Thank you for your contribution to language preservation.",
-    });
-    setHasRecording(false);
-    setFormData({
-      language: "",
-      region: "",
-      category: "",
-      transcription: "",
-      translation: "",
-      speakerAge: "",
-    });
+    
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to submit recordings.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    submitMutation.mutate();
   };
 
   return (
@@ -309,11 +380,15 @@ const Record = () => {
                     type="submit"
                     variant="hero"
                     size="xl"
-                    disabled={!hasRecording}
+                    disabled={!hasRecording || submitMutation.isPending}
                     className="gap-2"
                   >
-                    <Upload className="w-5 h-5" />
-                    Submit Recording
+                    {submitMutation.isPending ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Upload className="w-5 h-5" />
+                    )}
+                    {submitMutation.isPending ? "Submitting..." : "Submit Recording"}
                   </Button>
                 </div>
               </form>
