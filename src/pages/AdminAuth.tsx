@@ -57,11 +57,25 @@ const AdminAuth = () => {
 
     setResetLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // First, generate a password reset token via Supabase
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin-login`,
       });
       
-      if (error) throw error;
+      if (resetError) throw resetError;
+
+      // Send custom email via our Resend edge function
+      const { error: emailError } = await supabase.functions.invoke('send-password-reset', {
+        body: {
+          email,
+          resetUrl: `${window.location.origin}/admin-login`,
+        },
+      });
+
+      if (emailError) {
+        console.error("Resend email error:", emailError);
+        // Still show success since Supabase sent its default email
+      }
       
       toast({
         title: "Password reset email sent",
