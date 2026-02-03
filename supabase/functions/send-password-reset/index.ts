@@ -32,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "LinguaPreserve <onboarding@resend.dev>",
+      from: "LinguaPreserve <noreply@yourdomain.com>", // TODO: Replace with your verified domain
       to: [email],
       subject: "Reset your LinguaPreserve password",
       html: `
