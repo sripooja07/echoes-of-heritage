@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Mic, Square, Play, Upload, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { Mic, Square, Play, Pause, Upload, CheckCircle, AlertCircle, Loader2, RotateCcw } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 
 const categories = [
   "Word / Vocabulary",
@@ -31,30 +32,24 @@ const regions = [
   "Oceania",
 ];
 
-// Suggested languages for quick selection
-const suggestedLanguages = [
-  // North America
-  "Cherokee", "Navajo", "Yuchi", "Siletz Dee-ni", "Patwin",
-  // Oceania
-  "Māori", "Hawaiian", "Tanema", "Liki",
-  // Europe
-  "Welsh", "Basque", "Livonian", "Ter Sami",
-  // Asia
-  "Ainu", "Tibetan", "Odia", "Buryat", "Khmer", "Dzongkha", 
-  "Sinhala", "Shan", "Lepcha", "Newari", "Mizo", "Konkani", "Dumi",
-  // Africa
-  "Njerep", "Ongota",
-  // South America
-  "Taushiro", "Tinigua", "Chamicuro",
-];
-
 const Record = () => {
   const { user } = useAuth();
   const { trackActivity, endActivity } = useActivityTracker();
   const queryClient = useQueryClient();
   
-  const [isRecording, setIsRecording] = useState(false);
-  const [hasRecording, setHasRecording] = useState(false);
+  const {
+    isRecording,
+    audioBlob,
+    audioUrl,
+    startRecording,
+    stopRecording,
+    playRecording,
+    pausePlayback,
+    isPlaying,
+    resetRecording,
+    error: recordingError,
+  } = useAudioRecorder();
+
   const [formData, setFormData] = useState({
     language: "",
     region: "",
@@ -76,6 +71,17 @@ const Record = () => {
     };
   }, []);
 
+  // Show recording error
+  useEffect(() => {
+    if (recordingError) {
+      toast({
+        title: "Microphone Error",
+        description: recordingError,
+        variant: "destructive",
+      });
+    }
+  }, [recordingError]);
+
   // Fetch languages from database
   const { data: languages } = useQuery({
     queryKey: ["languages"],
@@ -90,12 +96,31 @@ const Record = () => {
   const submitMutation = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("You must be logged in to submit recordings");
+      if (!audioBlob) throw new Error("No recording to submit");
 
+      // Upload audio file to Supabase Storage
+      const fileName = `${user.id}/${Date.now()}.webm`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("voice-recordings")
+        .upload(fileName, audioBlob, {
+          contentType: audioBlob.type,
+          cacheControl: "3600",
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("voice-recordings")
+        .getPublicUrl(uploadData.path);
+
+      // Insert voice note record
       const { error } = await supabase.from("voice_notes").insert({
         user_id: user.id,
         language_name: formData.language,
         lesson_name: formData.lessonName || formData.category,
-        audio_url: "placeholder", // In production, this would be a real audio file URL
+        audio_url: urlData.publicUrl,
         transcription: formData.transcription,
         translation: formData.translation,
         status: "pending",
@@ -109,7 +134,7 @@ const Record = () => {
         title: "Recording submitted!",
         description: "Thank you for your contribution. An admin will review it shortly.",
       });
-      setHasRecording(false);
+      resetRecording();
       setFormData({
         language: "",
         region: "",
@@ -129,28 +154,28 @@ const Record = () => {
     },
   });
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-    toast({
-      title: "Recording started",
-      description: "Speak clearly into your microphone.",
-    });
+  const handleRecordToggle = async () => {
+    if (isRecording) {
+      stopRecording();
+      toast({
+        title: "Recording saved",
+        description: "Your audio has been captured successfully.",
+      });
+    } else {
+      await startRecording();
+      toast({
+        title: "Recording started",
+        description: "Speak clearly into your microphone.",
+      });
+    }
   };
 
-  const handleStopRecording = () => {
-    setIsRecording(false);
-    setHasRecording(true);
-    toast({
-      title: "Recording saved",
-      description: "Your audio has been captured successfully.",
-    });
-  };
-
-  const handlePlayback = () => {
-    toast({
-      title: "Playing recording",
-      description: "Audio playback started.",
-    });
+  const handlePlayToggle = () => {
+    if (isPlaying) {
+      pausePlayback();
+    } else {
+      playRecording();
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -167,6 +192,8 @@ const Record = () => {
     
     submitMutation.mutate();
   };
+
+  const hasRecording = !!audioBlob;
 
   return (
     <div className="min-h-screen bg-background">
@@ -206,7 +233,7 @@ const Record = () => {
                     <div className="relative">
                       <button
                         type="button"
-                        onClick={isRecording ? handleStopRecording : handleStartRecording}
+                        onClick={handleRecordToggle}
                         className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
                           isRecording
                             ? "bg-destructive animate-pulse"
@@ -247,18 +274,49 @@ const Record = () => {
                         : "Click to start recording"}
                     </p>
 
-                    {/* Playback Button */}
+                    {/* Playback Controls */}
                     {hasRecording && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        onClick={handlePlayback}
-                        className="gap-2"
-                      >
-                        <Play className="w-5 h-5" />
-                        Play Recording
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="lg"
+                          onClick={handlePlayToggle}
+                          className="gap-2"
+                        >
+                          {isPlaying ? (
+                            <>
+                              <Pause className="w-5 h-5" />
+                              Pause
+                            </>
+                          ) : (
+                            <>
+                              <Play className="w-5 h-5" />
+                              Play Recording
+                            </>
+                          )}
+                        </Button>
+                        
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="lg"
+                          onClick={resetRecording}
+                          className="gap-2"
+                        >
+                          <RotateCcw className="w-5 h-5" />
+                          Re-record
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Audio Player (native HTML5 for full controls) */}
+                    {audioUrl && (
+                      <audio 
+                        src={audioUrl} 
+                        controls 
+                        className="w-full max-w-md"
+                      />
                     )}
 
                     {/* Recording Status */}
